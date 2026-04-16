@@ -1,0 +1,13 @@
+# Node
+node_modules/
+*.log
+.DS_Store
+
+# Claude Code local state (if any ever appears)
+.claude/*.local.json
+.claude/sessions/
+.claude/state/
+
+# Editor
+.vscode/
+.idea/

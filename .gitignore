@@ -1,0 +1,22 @@
+# OS artifacts
+*:Zone.Identifier
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Python caches (nexus pipeline)
+__pycache__/
+*.pyc
+.ruff_cache/
+
+# Temp/backup
+*.bak
+*.pre-regen.bak
+*.tmp
+
+# Empty placeholder dirs (recreated by setup.sh)
+skills/learned/
+skills/user/

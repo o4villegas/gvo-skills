@@ -1,0 +1,44 @@
+{
+  "skill_name": "cloudflare-deploy",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Init a web project for cloudflare i will build a company webpage",
+      "expected_output": "Narrows to 2-3 cheap static/frontend templates, asks a clarifying question, recommends the most cost-efficient option",
+      "files": [],
+      "expectations": [
+        "Recommends at least 2 template options",
+        "Includes astro-blog-starter-template as one of the options",
+        "Mentions cost or pricing information for at least one template",
+        "Does NOT recommend Durable Objects, Hyperdrive, or Workers AI templates",
+        "Asks a follow-up question before proceeding to scaffold"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "i want to deploy a project to cloudflare, its gonna be a saas app with user accounts and a dashboard",
+      "expected_output": "Recommends full-stack templates with D1 for database, avoids expensive Hyperdrive/external DB options, mentions cost",
+      "files": [],
+      "expectations": [
+        "Recommends at least 2 template options",
+        "Recommends D1 as the database option rather than Postgres or Hyperdrive",
+        "Recommends a full-stack template that includes both frontend and backend",
+        "Mentions cost or pricing information",
+        "Asks about project location or a follow-up question before scaffolding"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "set up a cloudflare worker project, i need an api that stores data",
+      "expected_output": "Recommends d1-template or chanfana-openapi-template, highlights D1 free tier, avoids Postgres/Hyperdrive",
+      "files": [],
+      "expectations": [
+        "Recommends at least 2 template options",
+        "Includes d1-template or chanfana-openapi-template as an option",
+        "Mentions D1 free tier benefits",
+        "Does NOT default to Postgres or Hyperdrive for this new project",
+        "Asks about project location or a follow-up question before scaffolding"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,443 @@
+{
+  "version": 2,
+  "generated": "2026-04-14T21:30:00Z",
+  "skills": [
+    {
+      "id": "agentic-engineering__imp_2b52be86",
+      "name": "agentic-engineering",
+      "description": "Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing.",
+      "path": "skills/agentic-engineering/SKILL.md",
+      "category": "planning",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "autoresearch-agent__imp_06ceaef9",
+      "name": "autoresearch-agent",
+      "description": "Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy's autoresearch. The agent edits a target file, runs a fixed evaluation, keeps improvements (git commit),",
+      "path": "skills/autoresearch-agent/SKILL.md",
+      "category": "planning",
+      "tags": [],
+      "triggers": [
+        "fix",
+        "optimize",
+        "research"
+      ],
+      "isActive": true,
+      "source": "alirezarezvani/claude-skills"
+    },
+    {
+      "id": "blueprint__imp_11f613bf",
+      "name": "blueprint",
+      "description": "Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects. Each step has a self-contained context brief so a fresh agent can execute it cold. ",
+      "path": "skills/blueprint/SKILL.md",
+      "category": "planning",
+      "tags": [],
+      "triggers": [
+        "just do it",
+        "plan",
+        "review"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "codebase-onboarding__imp_9ff27448",
+      "name": "codebase-onboarding",
+      "description": "Codebase Onboarding",
+      "path": "skills/codebase-onboarding/SKILL.md",
+      "category": "discovery",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "alirezarezvani/claude-skills"
+    },
+    {
+      "id": "consult__imp_9d0bd8ca",
+      "name": "consult",
+      "description": "Cross-tool AI consultation. Use when user asks to 'consult gemini', 'ask codex', 'get second opinion', 'cross-check with claude', 'consult another AI', 'ask opencode', 'copilot opinion', or wants a se",
+      "path": "skills/consult/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "agentsys"
+    },
+    {
+      "id": "continuous-agent-loop__imp_cf9e744f",
+      "name": "continuous-agent-loop",
+      "description": "Patterns for continuous autonomous agent loops with quality gates, evals, and recovery controls.",
+      "path": "skills/continuous-agent-loop/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "council__imp_7011c524",
+      "name": "council",
+      "description": "Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you need structured disagreement before choosing.",
+      "path": "skills/council/SKILL.md",
+      "category": "planning",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "debate__imp_d5a90d07",
+      "name": "debate",
+      "description": "Structured AI debate templates and synthesis. Use when orchestrating multi-round debates between AI tools, 'debate topic', 'argue about', 'stress test idea', 'devil advocate'.",
+      "path": "skills/debate/SKILL.md",
+      "category": "planning",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "agentsys"
+    },
+    {
+      "id": "deslop__imp_912baf8b",
+      "name": "deslop",
+      "description": "Use when user wants to clean AI slop from code. Use for cleanup, remove debug statements, find ghost code, repo hygiene.",
+      "path": "skills/deslop/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "agentsys"
+    },
+    {
+      "id": "financial-analyst__imp_24e7976b",
+      "name": "financial-analyst",
+      "description": "Performs financial ratio analysis, DCF valuation, budget variance analysis, and rolling forecast construction for strategic decision-making. Use when analyzing financial statements, building valuation",
+      "path": "skills/financial-analyst/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [
+        "build"
+      ],
+      "isActive": true,
+      "source": "alirezarezvani/claude-skills"
+    },
+    {
+      "id": "first-customers__imp_fe9d309a",
+      "name": "first-customers",
+      "description": "Create a strategy for selling to your first 100 customers using the minimalist entrepreneur playbook. Use when someone has a product and needs to find customers, or is struggling with early sales.",
+      "path": "skills/first-customers/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [
+        "create"
+      ],
+      "isActive": true,
+      "source": "slavingia/skills"
+    },
+    {
+      "id": "focused-fix__imp_03a4d79a",
+      "name": "focused-fix",
+      "description": "Use when the user asks to fix, debug, or make a specific feature/module/area work end-to-end. Triggers: 'make X work', 'fix the Y feature', 'the Z module is broken', 'focus on [area]'. Not for quick s",
+      "path": "skills/focused-fix/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "fix"
+      ],
+      "isActive": true,
+      "source": "alirezarezvani/claude-skills"
+    },
+    {
+      "id": "from-billy__imp_15350cc0",
+      "name": "from-billy",
+      "description": "Chaos user-testing agent that stress-tests any running app by simulating a technically inept, confused, impatient human. Launches the app, runs multi-round adversarial testing with vision + console output, reaches multi-agent consensus before reporting, then auto-generates a remediation prompt via from-prompter.",
+      "path": "skills/from-billy/SKILL.md",
+      "category": "domain",
+      "tags": [
+        "testing",
+        "chaos",
+        "qa"
+      ],
+      "triggers": [
+        "from-billy",
+        "from billy",
+        "billy",
+        "chaos test",
+        "stress test my app",
+        "test like a bad user",
+        "break my app",
+        "user test",
+        "monkey test",
+        "QA my app",
+        "test the UX",
+        "try to break it",
+        "use it like an idiot",
+        "bash test",
+        "rage test",
+        "test all the things"
+      ],
+      "isActive": true,
+      "source": "existing"
+    },
+    {
+      "id": "from-kc-records__imp_0ab1edd2",
+      "name": "from-kc-records",
+      "description": "Extract KC Clearwater financial records from Gmail and CSV uploads into the kc-actuals D1 database. Handles Toast revenue, 17+ vendor expenses, CSV uploads, and receipt image OCR. Always use instead of ad-hoc Gmail searching for KC Clearwater financial data.",
+      "path": "skills/from-kc-records/SKILL.md",
+      "category": "domain",
+      "tags": [
+        "kc",
+        "finance",
+        "etl"
+      ],
+      "triggers": [
+        "from-kc-records",
+        "catch up the database",
+        "pull new records",
+        "sync financials",
+        "extract new expenses",
+        "get latest Toast data",
+        "what invoices came in",
+        "update kc-actuals",
+        "OCR receipts",
+        "scan attachments",
+        "read receipt photos",
+        "KC Clearwater",
+        "Toast sales",
+        "COGS",
+        "vendor orders"
+      ],
+      "isActive": true,
+      "source": "existing"
+    },
+    {
+      "id": "from-prompter__imp_136fd7f9",
+      "name": "from-prompter",
+      "description": "Autonomous Claude Code prompt engineer and optimizer. Crafts battle-ready agent prompts from user context, then iteratively improves them using a Karpathy-style autoresearch loop \u2014 one change per round, scored against a checklist, until the prompt hits 90%+ consistently.",
+      "path": "skills/from-prompter/SKILL.md",
+      "category": "domain",
+      "tags": [
+        "prompt",
+        "optimization",
+        "meta"
+      ],
+      "triggers": [
+        "from prompter",
+        "from-prompter",
+        "optimize my prompt",
+        "improve this prompt",
+        "help me write a prompt for Claude Code",
+        "I need a coding prompt",
+        "prompt for my agent",
+        "write me agent instructions",
+        "write a prompt",
+        "structure my request",
+        "agent prompt",
+        "coding instructions",
+        "task prompt",
+        "prompt template",
+        "harden this prompt",
+        "run the optimization loop"
+      ],
+      "isActive": true,
+      "source": "existing"
+    },
+    {
+      "id": "grow-sustainably__imp_e4d968b2",
+      "name": "grow-sustainably",
+      "description": "Evaluate business decisions through the lens of sustainable, profitable growth. Use when someone is making decisions about spending, hiring, fundraising, or scaling their business.",
+      "path": "skills/grow-sustainably/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "slavingia/skills"
+    },
+    {
+      "id": "karpathy-coder__imp_28f99488",
+      "name": "karpathy-coder",
+      "description": "Use when writing, reviewing, or committing code to enforce Karpathy's 4 coding principles \u2014 surface assumptions before coding, keep it simple, make surgical changes, define verifiable goals. Triggers ",
+      "path": "skills/karpathy-coder/SKILL.md",
+      "category": "planning",
+      "tags": [],
+      "triggers": [
+        "am I overcomplicating this",
+        "before I commit",
+        "check complexity",
+        "karpathy check",
+        "review",
+        "review my diff"
+      ],
+      "isActive": true,
+      "source": "alirezarezvani/claude-skills"
+    },
+    {
+      "id": "marketing-plan__imp_813fa91d",
+      "name": "marketing-plan",
+      "description": "Create a minimalist marketing plan focused on building an audience through content, not ads. Use when someone has product-market fit (~100 customers) and wants to scale with marketing, or needs a cont",
+      "path": "skills/marketing-plan/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [
+        "build",
+        "create",
+        "plan"
+      ],
+      "isActive": true,
+      "source": "slavingia/skills"
+    },
+    {
+      "id": "mvp__imp_80f511d4",
+      "name": "mvp",
+      "description": "Guide building a minimum viable product the minimalist entrepreneur way \u2014 manual first, then processized, then productized. Use when someone is ready to build their first product or struggling with sc",
+      "path": "skills/mvp/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [
+        "build"
+      ],
+      "isActive": true,
+      "source": "slavingia/skills"
+    },
+    {
+      "id": "orchestrate-review__imp_c8cc4428",
+      "name": "orchestrate-review",
+      "description": "Use when user asks to \\\"deep review the code\\\", \\\"thorough code review\\\", \\\"multi-pass review\\\", or when orchestrating the Phase 9 review loop. Provides review pass definitions (code quality, security",
+      "path": "skills/orchestrate-review/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "deep review the code",
+        "thorough code review",
+        "multi-pass review",
+        "code review",
+        "parallel review",
+        "review this"
+      ],
+      "isActive": true,
+      "source": "agentsys"
+    },
+    {
+      "id": "pricing__imp_9b1aaaaa",
+      "name": "pricing",
+      "description": "Help figure out pricing for a product or service using minimalist entrepreneur principles. Use when someone is setting prices, considering price changes, or struggling with what to charge.",
+      "path": "skills/pricing/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "slavingia/skills"
+    },
+    {
+      "id": "repo-intel__imp_f53d2c1c",
+      "name": "repo-intel",
+      "description": "Use when user asks to \\\"run repo intel\\\", \\\"generate repo map\\\", \\\"analyze repo\\\", \\\"query hotspots\\\", \\\"check ownership\\\", or \\\"bus factor\\\". Unified static analysis - git history, AST symbols, proje",
+      "path": "skills/repo-intel/SKILL.md",
+      "category": "discovery",
+      "tags": [],
+      "triggers": [
+        "run repo intel",
+        "generate repo map",
+        "analyze repo",
+        "query hotspots",
+        "check ownership",
+        "bus factor",
+        "git history analysis"
+      ],
+      "isActive": true,
+      "source": "agentsys"
+    },
+    {
+      "id": "saas-metrics-coach__imp_8ca09e26",
+      "name": "saas-metrics-coach",
+      "description": "SaaS financial health advisor. Use when a user shares revenue or customer numbers, or mentions ARR, MRR, churn, LTV, CAC, NRR, or asks how their SaaS business is doing.",
+      "path": "skills/saas-metrics-coach/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "alirezarezvani/claude-skills"
+    },
+    {
+      "id": "search-first__imp_1b476ea3",
+      "name": "search-first",
+      "description": "Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code. Invokes the researcher agent.",
+      "path": "skills/search-first/SKILL.md",
+      "category": "discovery",
+      "tags": [],
+      "triggers": [
+        "research"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "skill-evolution__imp_c3306eb3",
+      "name": "skill-evolution",
+      "description": "Skill evolution Worker API client. Use to record task analyses, evolve skills (fix/derived/captured), register new skills, check health, or view the dashboard. Trigger on: \"record analysis\", \"evolve s",
+      "path": "skills/skill-evolution/SKILL.md",
+      "category": "workflow",
+      "tags": [],
+      "triggers": [
+        "capture skill",
+        "derive skill",
+        "evolve",
+        "evolve skill",
+        "fix",
+        "fix skill",
+        "record",
+        "record analysis",
+        "register skill",
+        "skill dashboard",
+        "skill health",
+        "skill performance",
+        "skill-evolution"
+      ],
+      "isActive": true,
+      "source": "nexus-native"
+    },
+    {
+      "id": "validate-delivery__imp_734e0c77",
+      "name": "validate-delivery",
+      "description": "Use when user asks to \\\"validate delivery\\\", \\\"check readiness\\\", or \\\"verify completion\\\". Runs tests, build, and requirement checks with pass/fail instructions.",
+      "path": "skills/validate-delivery/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "validate delivery",
+        "check readiness",
+        "verify completion",
+        "ship check",
+        "delivery validation"
+      ],
+      "isActive": true,
+      "source": "agentsys"
+    },
+    {
+      "id": "validate-idea__imp_5729ae83",
+      "name": "validate-idea",
+      "description": "Validate a business idea using the minimalist entrepreneur framework. Use when someone has a business idea and wants to test if it's worth pursuing before building anything.",
+      "path": "skills/validate-idea/SKILL.md",
+      "category": "business",
+      "tags": [],
+      "triggers": [
+        "build",
+        "validate"
+      ],
+      "isActive": true,
+      "source": "slavingia/skills"
+    },
+    {
+      "id": "verification-loop__imp_0e07bd0d",
+      "name": "verification-loop",
+      "description": "A comprehensive verification system for Claude Code sessions.",
+      "path": "skills/verification-loop/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [],
+      "isActive": true,
+      "source": "everything-claude-code"
+    }
+  ]
+}
