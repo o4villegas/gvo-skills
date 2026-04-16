@@ -59,6 +59,25 @@ On auto-mode activation, create/update `.nexus-state.json` in project root:
 **Delete this file** when task completes or mode switches to assist.
 **Set `escalated: true`** when retry limit hit — next session starts in assist mode for that task.
 
+### Assumption Ledger (Critical — Auto Mode)
+
+In auto mode, **NEVER ask the user a question**. Instead:
+
+1. **Log the question** you would have asked to `conductor/tracks/{id}/assumptions.jsonl`
+2. **Record your assumption** with confidence level, alternatives, and evidence
+3. **Track the blast radius** (files and lines affected)
+4. **Tag the commit** that implements the assumption
+5. **Continue working**
+
+At delivery (Phase 6), present the full ledger grouped by confidence level.
+The user can reverse any assumption by ID: `"reverse A3"`.
+
+**Pause rule**: If 3+ consecutive assumptions are `confidence: low`, STOP auto mode 
+and switch to assist. Too many uncertain decisions compound error risk.
+
+See `references/assumption-ledger.md` for full format, field definitions, reversal 
+protocol, and anti-patterns.
+
 ### Auto Mode Decision Tree
 
 ```
@@ -70,6 +89,11 @@ Task arrives with --mode=auto
   ├── Plan has CRITICAL risk? → STOP, switch to assist, ask user
   ├── Plan is clean? → Skip Phase 4, begin Phase 5
   │
+  ├── Ambiguity encountered? → Log to assumption ledger (DO NOT ask user)
+  │     ├── confidence: high → log and continue
+  │     ├── confidence: medium → log and continue  
+  │     └── confidence: low (3+ consecutive) → STOP, switch to assist
+  │
   ├── Task fails? → retry (n/3)
   │     ├── n < 3 → fix and retry
   │     └── n = 3 → set escalated=true, STOP, report to user
@@ -79,6 +103,11 @@ Task arrives with --mode=auto
   │     └── Fail → fix cycle (m/2)
   │           ├── m < 2 → fix and re-verify
   │           └── m = 2 → escalate to user
+  │
+  ├── Phase 6: Present assumption ledger to user
+  │     ├── "approve all" → accept, complete
+  │     ├── "reverse A{N}" → revert commit, apply alternative, re-verify
+  │     └── "reverse all medium" → batch reversal
   │
   └── Complete → delete .nexus-state.json, report summary
 ```
