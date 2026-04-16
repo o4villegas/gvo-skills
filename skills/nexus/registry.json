@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated": "2026-04-14T21:30:00Z",
+  "generated": "2026-04-16T19:45:00Z",
   "skills": [
     {
       "id": "agentic-engineering__imp_2b52be86",
@@ -436,6 +436,156 @@
       "category": "implementation",
       "tags": [],
       "triggers": [],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "apex__imp_15f9976d",
+      "name": "apex",
+      "description": "Systematic multi-step implementation using APEX methodology with progressive context loading, role isolation, economy mode, and team-based parallel execution.",
+      "path": "skills/apex/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "apex",
+        "implement",
+        "systematic build"
+      ],
+      "isActive": true,
+      "source": "AlxWrtl/apex-skill"
+    },
+    {
+      "id": "api-design__imp_a2db55d6",
+      "name": "api-design",
+      "description": "REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting.",
+      "path": "skills/api-design/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "api design",
+        "REST patterns",
+        "endpoint design"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "backend-patterns__imp_e05cd7f3",
+      "name": "backend-patterns",
+      "description": "Backend architecture patterns: repo/service layers, N+1 prevention, caching, JWT auth, RBAC, queues, structured logging.",
+      "path": "skills/backend-patterns/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "backend patterns",
+        "service layer",
+        "auth patterns"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "frontend-patterns__imp_e7e5eefb",
+      "name": "frontend-patterns",
+      "description": "Frontend patterns: compound components, hooks, state management (Zustand), data fetching, form handling, performance optimization.",
+      "path": "skills/frontend-patterns/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "frontend patterns",
+        "component patterns",
+        "react patterns"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "e2e-testing__imp_c1e685a1",
+      "name": "e2e-testing",
+      "description": "Playwright E2E testing patterns, Page Object Model, CI/CD integration, artifact management, and flaky test strategies.",
+      "path": "skills/e2e-testing/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "e2e testing",
+        "playwright patterns",
+        "integration tests"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "security-review__imp_b7d50f1c",
+      "name": "security-review",
+      "description": "Security review patterns: OWASP Top 10, input validation, auth, secrets management, CSP, XSS/CSRF prevention.",
+      "path": "skills/security-review/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "security review",
+        "vulnerability check",
+        "OWASP"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "postgres-patterns__imp_735a3f4f",
+      "name": "postgres-patterns",
+      "description": "PostgreSQL patterns: query optimization, indexing, schema design, migrations, and Supabase best practices.",
+      "path": "skills/postgres-patterns/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "postgres",
+        "database patterns",
+        "query optimization"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "docker-patterns__imp_234b045b",
+      "name": "docker-patterns",
+      "description": "Docker and Docker Compose patterns: multi-stage builds, container security, networking, volume strategies, multi-service orchestration.",
+      "path": "skills/docker-patterns/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "docker",
+        "container",
+        "dockerfile"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "github-ops__imp_852d1f2f",
+      "name": "github-ops",
+      "description": "GitHub operations: issue triage, PR management, CI/CD, release management, security monitoring using gh CLI.",
+      "path": "skills/github-ops/SKILL.md",
+      "category": "workflow",
+      "tags": [],
+      "triggers": [
+        "github ops",
+        "issue management",
+        "PR automation"
+      ],
+      "isActive": true,
+      "source": "everything-claude-code"
+    },
+    {
+      "id": "deployment-patterns__imp_bd79fee8",
+      "name": "deployment-patterns",
+      "description": "Deployment workflows: CI/CD pipelines, blue-green, canary, rollback strategies, health checks, production readiness checklists.",
+      "path": "skills/deployment-patterns/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "deployment",
+        "CI/CD",
+        "rollback strategy"
+      ],
       "isActive": true,
       "source": "everything-claude-code"
     }
