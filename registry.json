@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated": "2026-04-16T19:45:00Z",
+  "generated": "2026-04-16T20:15:00Z",
   "skills": [
     {
       "id": "agentic-engineering__imp_2b52be86",
@@ -588,6 +588,53 @@
       ],
       "isActive": true,
       "source": "everything-claude-code"
+    },
+    {
+      "id": "conductor__imp_cd131557",
+      "name": "conductor",
+      "description": "Context-driven development orchestrator with persistent state, track management, TDD loops, and session resumability. Supports auto mode.",
+      "path": "skills/conductor/SKILL.md",
+      "category": "workflow",
+      "tags": [],
+      "triggers": [
+        "conductor",
+        "project setup",
+        "track management",
+        "resume work"
+      ],
+      "isActive": true,
+      "source": "wshobson/agents"
+    },
+    {
+      "id": "agent-teams__imp_50aaa75d",
+      "name": "agent-teams",
+      "description": "Parallel multi-agent execution with file ownership, interface contracts, and merge strategies. Presets: review, debug, feature, security.",
+      "path": "skills/agent-teams/SKILL.md",
+      "category": "workflow",
+      "tags": [],
+      "triggers": [
+        "parallel agents",
+        "team spawn",
+        "multi-agent",
+        "parallel work"
+      ],
+      "isActive": true,
+      "source": "wshobson/agents"
+    },
+    {
+      "id": "full-stack-orchestration__imp_095a5a81",
+      "name": "full-stack-orchestration",
+      "description": "9-step full-stack feature orchestrator: requirements \u2192 API \u2192 DB \u2192 backend \u2192 frontend \u2192 tests \u2192 security \u2192 perf \u2192 deploy.",
+      "path": "skills/full-stack-orchestration/SKILL.md",
+      "category": "implementation",
+      "tags": [],
+      "triggers": [
+        "full-stack feature",
+        "end-to-end build",
+        "full stack"
+      ],
+      "isActive": true,
+      "source": "wshobson/agents"
     }
   ]
 }
