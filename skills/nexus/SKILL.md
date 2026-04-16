@@ -39,6 +39,50 @@ When `--mode=auto`:
 
 Trigger words for auto: "auto", "autonomous", "just do it", "ship it", "no questions", "dangerousbypass"
 
+### Auto Mode State File
+
+On auto-mode activation, create/update `.nexus-state.json` in project root:
+
+```json
+{
+  "mode": "auto",
+  "task": "description from user",
+  "started": "ISO_TIMESTAMP",
+  "phase": 3,
+  "retries": { "current_task": 0, "total_cycles": 0 },
+  "quality_gates": { "build": null, "tests": null, "review": null },
+  "escalated": false
+}
+```
+
+**Read this file at session start** to detect in-progress auto runs.
+**Delete this file** when task completes or mode switches to assist.
+**Set `escalated: true`** when retry limit hit — next session starts in assist mode for that task.
+
+### Auto Mode Decision Tree
+
+```
+Task arrives with --mode=auto
+  │
+  ├── Description >20 words? → Skip Phase 1
+  ├── Description ≤20 words? → Run Phase 1 (brief: 2 questions max)
+  │
+  ├── Plan has CRITICAL risk? → STOP, switch to assist, ask user
+  ├── Plan is clean? → Skip Phase 4, begin Phase 5
+  │
+  ├── Task fails? → retry (n/3)
+  │     ├── n < 3 → fix and retry
+  │     └── n = 3 → set escalated=true, STOP, report to user
+  │
+  ├── All tasks done? → verification-loop (automated)
+  │     ├── Pass → deslop → commit → complete
+  │     └── Fail → fix cycle (m/2)
+  │           ├── m < 2 → fix and re-verify
+  │           └── m = 2 → escalate to user
+  │
+  └── Complete → delete .nexus-state.json, report summary
+```
+
 ---
 
 ## 1. Classify & Route
