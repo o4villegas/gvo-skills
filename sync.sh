@@ -44,7 +44,7 @@ fi
 # 3. Inventory
 echo "[3/3] Skill inventory:"
 skill_count=$(find "$REPO_DIR/skills" -maxdepth 2 -name "SKILL.md" | wc -l)
-registry_count=$(python3 -c "import json; print(len(json.load(open('$REPO_DIR/registry.json'))['skills']))" 2>/dev/null || echo "?")
+registry_count=$(grep -c '^      "name":' "$REPO_DIR/registry.json" 2>/dev/null || echo "?")
 echo "  SKILL.md files:    $skill_count"
 echo "  Registry entries:  $registry_count"
 echo ""
