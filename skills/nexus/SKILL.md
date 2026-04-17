@@ -154,9 +154,9 @@ against `triggers` array. Load ONLY matched skills by reading their SKILL.md.
 | deslop | skills/deslop/SKILL.md | clean code, remove slop, repo hygiene |
 | verification-loop | skills/verification-loop/SKILL.md | verify, quality check, pre-PR |
 | focused-fix | skills/focused-fix/SKILL.md | fix bug, targeted fix |
-| conductor | skills/conductor/SKILL.md | project setup, track management, auto mode state |
-| agent-teams | skills/agent-teams/SKILL.md | parallel agents, team spawn, multi-agent |
-| full-stack-orchestration | skills/full-stack-orchestration/SKILL.md | full-stack feature, end-to-end build |
+| conductor | ../conductor/SKILL.md | project setup, track management, auto mode state |
+| agent-teams | ../agent-teams/SKILL.md | parallel agents, team spawn, multi-agent |
+| full-stack-orchestration | ../full-stack-orchestration/SKILL.md | full-stack feature, end-to-end build |
 
 ---
 

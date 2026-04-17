@@ -17,29 +17,29 @@ If a future session suggests swapping to Sonnet/Haiku or disabling thinking "bec
 
 ## What This Directory Is
 
-`~/.claude/skills/nexus/` is the **build target and runtime home** for Nexus — a unified skill orchestration system for Claude Code. As of 2026-04-13, this directory holds only the spec drop in `docs/`. The build has not yet started.
+`~/.claude/skills/nexus/` is the **runtime home** for Nexus — a unified skill orchestration system for Claude Code. Build complete; registry generated 2026-04-16. Current layout:
 
 | Location | Status |
 |----------|--------|
-| `docs/` | **Spec drop.** 4 markdown files defining what to build. Read these first. |
-| `SKILL.md` | **Not yet created.** Will be the one and only auto-loaded skill. Source: `docs/nexus-SKILL.md`. |
-| `registry.json` | **Not yet created.** Lazy-load index for all on-demand skills. |
-| `pipeline/` | **Not yet created.** Seven phase files (`01-interview.md` … `07-final-delivery.md`). |
-| `agents/` | **Not yet created.** Six expert perspective files for the Phase 3 council. |
-| `skills/` | **Not yet created.** All on-demand skills extracted from source repos. |
-| `references/` | **Not yet created.** Tier 2 reference docs (non-executable). |
-| `archive/` | **Not yet created.** Superseded skills (`skill-forge`, `skill-creator`). |
+| `SKILL.md` | Auto-loaded master skill (~290 lines). Only file loaded at session start. |
+| `registry.json` | Lazy-load index. 41 skills registered. Paths resolve relative to `nexus/` — `skills/<name>/SKILL.md` for nested Tier 1 skills, `../<name>/SKILL.md` for siblings that live at the top-level repo. |
+| `pipeline/` | 7 phase files: `01-interview.md` through `07-final-delivery.md`. |
+| `agents/` | 6 expert perspective files: `architect`, `domain-researcher`, `implementer`, `lead`, `qa-engineer`, `ux-specialist`. |
+| `skills/` | 28 nested Tier 1 skill directories extracted from source repos. An additional 13 skills live as siblings under `/c/dev/gvo-skills/skills/<name>/` and are referenced via `../<name>/` in the registry. |
+| `references/` | 16 Tier 2 reference docs (non-executable): assumption ledger, prompt rules, drift analysis, coding/testing/security patterns, etc. |
+| `archive/` | `ARCHIVED.md` index + `from-skill-forge/` (superseded by skill-evolution Worker). |
+| `docs/` | Original 4-file spec drop. Historical — retained as rebuild reference, no longer load-bearing. |
 
-## The Spec Drop in `docs/`
+## The Original Spec Drop in `docs/`
 
 | File | Role |
 |------|------|
-| `docs/nexus-claude-code-prompt.md` | **Authoritative 12-step build instructions.** Follow in order. |
-| `docs/nexus-unified-skill-system.md` | **Architecture spec.** Directory layout, source repos, registry schema. |
-| `docs/nexus-SKILL.md` | **Artifact to install.** Copy verbatim to `./SKILL.md` in Step 2. |
-| `docs/nexus-repo-scan-results.md` | **Inventory.** 726 skills scanned across 6 repos, tiered by relevance. |
+| `docs/nexus-claude-code-prompt.md` | Authoritative 12-step build instructions used to produce the current runtime. |
+| `docs/nexus-unified-skill-system.md` | Architecture spec — directory layout, source repos, registry schema. |
+| `docs/nexus-SKILL.md` | Source artifact for `./SKILL.md` (Step 2 of the build). |
+| `docs/nexus-repo-scan-results.md` | Inventory snapshot — 726 skills scanned across 6 repos, tiered by relevance. |
 
-These four files are load-bearing until the build is verified. Do not delete `docs/` — it remains the blueprint.
+These four files guided the original build. Keep `docs/` as historical reference for future rebuilds; do not treat it as current runtime state — the authoritative runtime lives in `SKILL.md` + `registry.json`.
 
 ## Core Architecture (Big Picture)
 
@@ -67,9 +67,9 @@ All repos are cloned under `/home/lando555/`. When extracting skills, read SKILL
 
 Before extracting from any repo, read that repo's `CLAUDE.md` and `AGENTS.md` for context (see Step 4 of `docs/nexus-claude-code-prompt.md`).
 
-## Build Execution
+## Build Execution (Historical — Completed)
 
-The authoritative step-by-step build is `docs/nexus-claude-code-prompt.md`. Follow it in order. The 12 steps (abbreviated):
+The original step-by-step build was driven by `docs/nexus-claude-code-prompt.md`. Retained here as a rebuild recipe. The 12 steps (abbreviated):
 
 1. Create directory tree (`pipeline/`, `agents/`, `skills/`, `archive/`, `references/`)
 2. Install master `SKILL.md` from `docs/nexus-SKILL.md`

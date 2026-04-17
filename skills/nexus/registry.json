@@ -443,7 +443,7 @@
       "id": "apex__imp_15f9976d",
       "name": "apex",
       "description": "Systematic multi-step implementation using APEX methodology with progressive context loading, role isolation, economy mode, and team-based parallel execution.",
-      "path": "skills/apex/SKILL.md",
+      "path": "../apex/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -458,7 +458,7 @@
       "id": "api-design__imp_a2db55d6",
       "name": "api-design",
       "description": "REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting.",
-      "path": "skills/api-design/SKILL.md",
+      "path": "../api-design/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -473,7 +473,7 @@
       "id": "backend-patterns__imp_e05cd7f3",
       "name": "backend-patterns",
       "description": "Backend architecture patterns: repo/service layers, N+1 prevention, caching, JWT auth, RBAC, queues, structured logging.",
-      "path": "skills/backend-patterns/SKILL.md",
+      "path": "../backend-patterns/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -488,7 +488,7 @@
       "id": "frontend-patterns__imp_e7e5eefb",
       "name": "frontend-patterns",
       "description": "Frontend patterns: compound components, hooks, state management (Zustand), data fetching, form handling, performance optimization.",
-      "path": "skills/frontend-patterns/SKILL.md",
+      "path": "../frontend-patterns/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -503,7 +503,7 @@
       "id": "e2e-testing__imp_c1e685a1",
       "name": "e2e-testing",
       "description": "Playwright E2E testing patterns, Page Object Model, CI/CD integration, artifact management, and flaky test strategies.",
-      "path": "skills/e2e-testing/SKILL.md",
+      "path": "../e2e-testing/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -518,7 +518,7 @@
       "id": "security-review__imp_b7d50f1c",
       "name": "security-review",
       "description": "Security review patterns: OWASP Top 10, input validation, auth, secrets management, CSP, XSS/CSRF prevention.",
-      "path": "skills/security-review/SKILL.md",
+      "path": "../security-review/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -533,7 +533,7 @@
       "id": "postgres-patterns__imp_735a3f4f",
       "name": "postgres-patterns",
       "description": "PostgreSQL patterns: query optimization, indexing, schema design, migrations, and Supabase best practices.",
-      "path": "skills/postgres-patterns/SKILL.md",
+      "path": "../postgres-patterns/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -548,7 +548,7 @@
       "id": "docker-patterns__imp_234b045b",
       "name": "docker-patterns",
       "description": "Docker and Docker Compose patterns: multi-stage builds, container security, networking, volume strategies, multi-service orchestration.",
-      "path": "skills/docker-patterns/SKILL.md",
+      "path": "../docker-patterns/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -563,7 +563,7 @@
       "id": "github-ops__imp_852d1f2f",
       "name": "github-ops",
       "description": "GitHub operations: issue triage, PR management, CI/CD, release management, security monitoring using gh CLI.",
-      "path": "skills/github-ops/SKILL.md",
+      "path": "../github-ops/SKILL.md",
       "category": "workflow",
       "tags": [],
       "triggers": [
@@ -578,7 +578,7 @@
       "id": "deployment-patterns__imp_bd79fee8",
       "name": "deployment-patterns",
       "description": "Deployment workflows: CI/CD pipelines, blue-green, canary, rollback strategies, health checks, production readiness checklists.",
-      "path": "skills/deployment-patterns/SKILL.md",
+      "path": "../deployment-patterns/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
@@ -593,7 +593,7 @@
       "id": "conductor__imp_cd131557",
       "name": "conductor",
       "description": "Context-driven development orchestrator with persistent state, track management, TDD loops, and session resumability. Supports auto mode.",
-      "path": "skills/conductor/SKILL.md",
+      "path": "../conductor/SKILL.md",
       "category": "workflow",
       "tags": [],
       "triggers": [
@@ -609,7 +609,7 @@
       "id": "agent-teams__imp_50aaa75d",
       "name": "agent-teams",
       "description": "Parallel multi-agent execution with file ownership, interface contracts, and merge strategies. Presets: review, debug, feature, security.",
-      "path": "skills/agent-teams/SKILL.md",
+      "path": "../agent-teams/SKILL.md",
       "category": "workflow",
       "tags": [],
       "triggers": [
@@ -625,7 +625,7 @@
       "id": "full-stack-orchestration__imp_095a5a81",
       "name": "full-stack-orchestration",
       "description": "9-step full-stack feature orchestrator: requirements \u2192 API \u2192 DB \u2192 backend \u2192 frontend \u2192 tests \u2192 security \u2192 perf \u2192 deploy.",
-      "path": "skills/full-stack-orchestration/SKILL.md",
+      "path": "../full-stack-orchestration/SKILL.md",
       "category": "implementation",
       "tags": [],
       "triggers": [
