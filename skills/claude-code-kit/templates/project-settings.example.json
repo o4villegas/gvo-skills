@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/settings.schema.json",
+  "permissions": {
+    "allow": [
+      "Bash(bun run build:*)",
+      "Bash(bun run lint:*)",
+      "Bash(bun run lint)",
+      "Bash(bun run test:*)",
+      "Bash(bun run test)",
+      "Bash(bun run typecheck:*)",
+      "Bash(bun run typecheck)",
+      "Bash(bun run dev)",
+      "Bash(bun run format)",
+      "Bash(bun install)",
+      "Bash(bun add:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Read(*)",
+      "Write(*)"
+    ],
+    "deny": []
+  },
+  "model": "claude-opus-4-5-20250514",
+  "thinkingEnabled": true
+}

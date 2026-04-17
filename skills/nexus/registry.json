@@ -44,6 +44,30 @@
       "source": "everything-claude-code"
     },
     {
+      "id": "claude-code-kit__imp_local",
+      "name": "claude-code-kit",
+      "description": "Boris Cherny's Claude Code best-practices kit — 6 slash commands (verify, commit-push-pr, fix-errors, pr-feedback, new-feature, review), 4 subagents (build-validator, code-architect, code-simplifier, verify-app), and project templates (CLAUDE.md, settings.json, hooks.json). Use when bootstrapping a new project or need lightweight per-project slash commands.",
+      "path": "../claude-code-kit/SKILL.md",
+      "category": "implementation",
+      "tags": [
+        "template",
+        "slash-commands",
+        "subagents"
+      ],
+      "triggers": [
+        "verify",
+        "commit push pr",
+        "fix errors",
+        "pr feedback",
+        "new feature",
+        "code review",
+        "simplify code",
+        "scaffold claude code"
+      ],
+      "isActive": true,
+      "source": "local/claude-code-kit"
+    },
+    {
       "id": "codebase-onboarding__imp_9ff27448",
       "name": "codebase-onboarding",
       "description": "Codebase Onboarding",

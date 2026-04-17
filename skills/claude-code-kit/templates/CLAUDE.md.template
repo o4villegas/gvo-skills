@@ -1,0 +1,94 @@
+# Development Workflow
+
+**Project**: [PROJECT_NAME]
+**Stack**: [YOUR_STACK - e.g., React Router v7, Hono, Cloudflare Workers]
+**Package Manager**: Always use `bun`, not `npm`.
+
+## Quick Reference
+
+```sh
+# 1. Make changes
+
+# 2. Typecheck (fast)
+bun run typecheck
+
+# 3. Run tests
+bun run test -- -t "test name"    # Single suite
+bun run test:file -- "glob"       # Specific files
+
+# 4. Lint before committing
+bun run lint:file -- "file1.ts"   # Specific files
+bun run lint                       # All files
+
+# 5. Before creating PR
+bun run lint && bun run test
+```
+
+## Code Style & Patterns
+
+### TypeScript
+- Prefer `type` over `interface`
+- **Never use `enum`** - use string literal unions instead
+- Use Zod for runtime validation
+- Prefer explicit return types on exported functions
+
+### Imports
+- Use relative imports for local modules
+- Group imports: external → internal → types
+- No circular dependencies
+
+### Error Handling
+- Use Result types or explicit error returns over thrown exceptions
+- Always handle promise rejections
+- Log errors with context
+
+## Architecture Decisions
+
+### File Structure
+```
+src/
+├── components/    # React components
+├── lib/           # Shared utilities
+├── routes/        # Route handlers
+├── types/         # Type definitions
+└── workers/       # Cloudflare Workers
+```
+
+### Naming Conventions
+- Components: PascalCase (`UserProfile.tsx`)
+- Utilities: camelCase (`formatDate.ts`)
+- Types: PascalCase with descriptive suffixes (`UserResponse`, `CreateUserInput`)
+- Constants: SCREAMING_SNAKE_CASE
+
+## Testing Requirements
+
+- Write tests for new features
+- Test edge cases and error states
+- Use descriptive test names: `should [action] when [condition]`
+- Mock external services, not internal modules
+
+## DO NOT
+
+- Use `any` type without explicit justification
+- Commit commented-out code
+- Skip error handling
+- Use `console.log` for debugging (use proper logging)
+- Create files larger than 300 lines without splitting
+
+## Verification Checklist
+
+Before considering work complete:
+1. [ ] Typecheck passes: `bun run typecheck`
+2. [ ] Tests pass: `bun run test`
+3. [ ] Lint passes: `bun run lint`
+4. [ ] No console errors in browser
+5. [ ] Feature works as expected in dev environment
+
+## Common Mistakes to Avoid
+
+<!-- Add entries here when Claude does something incorrectly -->
+<!-- Example: "Don't use fs.readFile - use Bun.file() instead" -->
+
+## Project-Specific Notes
+
+<!-- Add project-specific context here -->
