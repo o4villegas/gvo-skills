@@ -1,0 +1,7 @@
+# Force LF for shell scripts — they must not have CRLF or bash fails with
+# "/usr/bin/env: 'bash\r': No such file or directory" on Linux/WSL.
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Keep other text files normalized (auto), binaries untouched.
+* text=auto
