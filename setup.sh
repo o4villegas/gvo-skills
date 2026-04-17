@@ -15,8 +15,48 @@ echo "Skills dir: $SKILLS_DIR"
 echo "Link path:  $SKILLS_LINK"
 echo ""
 
+# Guard: refuse to run from a cross-environment UNC path.
+# setup.sh must run natively in its target env (WSL bash inside WSL, PowerShell
+# on Windows per README, bash on VPS). Running Windows-bash against a WSL path
+# (or WSL-bash against a Windows path) creates broken symlinks.
+case "$REPO_DIR" in
+    *"wsl\$"*|*"wsl\\\$"*|//*|\\\\*)
+        echo "ERROR: Repo path looks like a cross-env UNC path: $REPO_DIR"
+        echo "  Run setup.sh natively in the target env (WSL bash / PowerShell / VPS bash)."
+        echo "  Windows-native install: use 'mklink /J' per README."
+        exit 1
+        ;;
+esac
+
 # Ensure ~/.claude exists
 mkdir -p "$HOME/.claude"
+
+# Register user-scope MCP servers BEFORE symlink handling, so re-runs that
+# early-exit on the symlink step still get MCP servers applied.
+# Idempotent: checks existing registrations before adding. Skips silently if
+# 'claude' CLI is not on PATH (e.g., some VPS envs).
+if command -v claude >/dev/null 2>&1; then
+    echo "[MCP] Registering user-scope servers..."
+    # name|json pairs — add more lines to register additional servers
+    MCP_SERVERS=(
+        'chrome-devtools|{"command":"npx","args":["-y","chrome-devtools-mcp@latest"]}'
+    )
+    existing_mcp="$(claude mcp list 2>/dev/null || true)"
+    for entry in "${MCP_SERVERS[@]}"; do
+        mcp_name="${entry%%|*}"
+        mcp_json="${entry#*|}"
+        if printf '%s\n' "$existing_mcp" | grep -q "^${mcp_name}:"; then
+            echo "  OK:    $mcp_name (already registered)"
+        else
+            if claude mcp add-json -s user "$mcp_name" "$mcp_json" >/dev/null 2>&1; then
+                echo "  ADDED: $mcp_name (user scope)"
+            else
+                echo "  WARN:  $mcp_name registration failed"
+            fi
+        fi
+    done
+    echo ""
+fi
 
 # Handle existing skills directory
 if [ -L "$SKILLS_LINK" ]; then
