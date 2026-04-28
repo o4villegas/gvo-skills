@@ -199,11 +199,13 @@ PROMPT
   # on all platforms, not just when the observer happens to be launched from the project root.
   cd "$PROJECT_DIR" || { echo "[$(date)] Failed to cd to PROJECT_DIR ($PROJECT_DIR), skipping analysis" >> "$LOG_FILE"; rm -f "$analysis_file"; return; }
 
-  # Prevent observe.sh from recording this automated Haiku session as observations.
+  # Prevent observe.sh from recording this automated analysis session as observations.
   # Pass prompt via -p flag instead of stdin redirect for Windows compatibility (#842).
   # prompt_content is already loaded in-memory so this no longer depends on the
   # mktemp absolute path continuing to resolve after cwd changes (#1296).
-  ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal claude --model haiku --max-turns "$max_turns" --print \
+  # Model: opus (alias for latest Opus). Switched from haiku per user 2026-04-28 —
+  # Haiku quality was insufficient for nuanced pattern detection across mixed projects.
+  ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal claude --model opus --max-turns "$max_turns" --print \
     --allowedTools "Read,Write" \
     -p "$prompt_content" >> "$LOG_FILE" 2>&1 &
   claude_pid=$!

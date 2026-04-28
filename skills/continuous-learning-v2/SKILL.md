@@ -38,7 +38,7 @@ An advanced learning system that turns your Claude Code sessions into reusable k
 | Feature | v1 | v2 |
 |---------|----|----|
 | Observation | Stop hook (session end) | PreToolUse/PostToolUse (100% reliable) |
-| Analysis | Main context | Background agent (Haiku) |
+| Analysis | Main context | Background agent (Opus 4.7 — switched from Haiku 2026-04-28) |
 | Granularity | Full skills | Atomic "instincts" |
 | Confidence | None | 0.3-0.9 weighted |
 | Evolution | Direct to skill | Instincts -> cluster -> skill/command/agent |
@@ -90,7 +90,7 @@ Session Activity (in a git repo)
 |   (prompts, tool calls, outcomes, project)   |
 +---------------------------------------------+
       |
-      | Observer agent reads (background, Haiku)
+      | Observer agent reads (background, Opus 4.7)
       v
 +---------------------------------------------+
 |          PATTERN DETECTION                   |

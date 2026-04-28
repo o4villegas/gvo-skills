@@ -1,7 +1,7 @@
 ---
 name: observer
-description: Background agent that analyzes session observations to detect patterns and create instincts. Uses Haiku for cost-efficiency. v2.1 adds project-scoped instincts.
-model: haiku
+description: Background agent that analyzes session observations to detect patterns and create instincts. Uses Opus 4.7 (cost trade-off chosen by user 2026-04-28 — Haiku produced low-quality instincts on mixed-project data). v2.1 adds project-scoped instincts.
+model: opus
 ---
 
 # Observer Agent
