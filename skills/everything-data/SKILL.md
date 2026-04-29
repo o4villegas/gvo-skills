@@ -6,31 +6,30 @@ description: >
   schema, profiles quality, builds P&L with variance, applies the appropriate
   unit-economics lens (retail / SaaS / transaction / PE), runs Bull/Base/Bear
   sensitivity, scans statistical pitfalls and QA defects, cites every claim,
-  and optionally renders a self-contained Chart.js dashboard. Designed for
-  the user's kava bar (KC) and its BBCO retail product line as canonical
-  case; equally usable on any other dataset. Replaces 11 chained skills with
-  one ordered pass under a single master-check. Trigger on "/everything-data",
-  "everything data on [X]", "KC P&L", "KC variance report", "BBCO mix",
-  "scorecard deep dive", "full data audit", "unit economics for [X]",
-  "data report on [X]", "BBCO product line review".
+  and optionally renders a self-contained Chart.js dashboard or audit-grade
+  Excel data pack. Replaces 11 chained skills with one ordered pass under a
+  single master-check. Trigger on "/everything-data", "everything data on [X]",
+  "P&L variance for [X]", "scorecard deep dive on [X]", "full data audit on [X]",
+  "unit economics for [X]", "data report on [X]", "product-line review for [X]",
+  "variance report", "complete analysis on [X]".
 origin: gvo-skills (merge of 3-statements, earnings-analysis, returns-analysis, unit-economics, data-exploration, data-validation, interactive-dashboard-builder, statistical-analysis, data-visualization, sql-queries, csv-data-summarizer)
 ---
 
 # Everything Data — Source-Agnostic Financial + Data Analysis
 
-One ordered pass that profiles data, builds a P&L with variance, applies the right unit-economics lens for the business, runs sensitivity, scans for statistical and QA pitfalls, and ships a sourced markdown report (and optionally a self-contained Chart.js dashboard). Built for KC + BBCO as the canonical case; works on any business or dataset.
+One ordered pass that profiles data, builds a P&L with variance, applies the right unit-economics lens for the business, runs sensitivity, scans for statistical and QA pitfalls, and ships a sourced markdown report (and optionally a self-contained Chart.js dashboard or Excel data pack). Source-agnostic and business-agnostic — the framework applies to any dataset, any industry, any lens.
 
 ## When to use this skill
 
 Use when:
 - The user asks for a "full" / "everything" / "complete" / "deep dive" analysis of a business or dataset.
-- The user names a period and a target ("April KC P&L", "BBCO mix last quarter", "this customer.csv").
+- The user names a period and a target ("April P&L", "product-line mix last quarter", "this customer.csv").
 - The question would otherwise require chaining 4+ analysis skills (profile → variance → cohorts → sensitivity → report → dashboard).
 - The user wants a dashboard rendered alongside the numerical analysis.
 
 Don't use when:
 - The user wants a single narrow metric ("just give me April revenue") — answer directly.
-- The user wants pure ETL ("load the new Toast CSV") — defer to `/from-kc-records` or equivalent.
+- The user wants pure ETL ("load this raw export into the warehouse") — defer to a domain-specific ETL skill.
 - The user wants only a dashboard and the numbers are already trusted — call the existing dashboard pipeline directly.
 
 ## Deliverables (always)
@@ -43,7 +42,7 @@ Don't use when:
 Before running any query or computation, lock these:
 
 - **The question**: what is the user actually trying to decide or learn? Period, scope, decision support, or general audit?
-- **The target**: which business / entity / dataset? (KC overall? BBCO product line? a customer.csv?)
+- **The target**: which business / entity / dataset? (whole company? a specific product line or sub-brand? a single customer file?)
 - **The data sources**: every input that's been provided or should be queried. SQL connection details, file paths, pasted tables, prior analyses. **Do not assume any specific schema or table** — discover at runtime.
 - **Output format**: markdown report (default), HTML dashboard (when requested), both.
 
@@ -62,10 +61,10 @@ When the data has multiple entity types, surface the choice and pick one explici
 
 Capture company-specific terms upfront and put them in the report's Definitions section:
 
-- BBCO at KC = bottled beverage SKU class (cans, 4-packs).
+- Any sub-brand, SKU class, or product code that appears in the data (often a 3-5 letter abbreviation).
 - "Shift" vs "daypart" — different in some POS systems.
-- "Substance" at KC = kava / kratom / mixed / delta9 / none.
-- Any other proprietary metric names.
+- Domain-specific attribute taxonomies (e.g., a category column with values like "premium / standard / economy" or a substance/material classification).
+- Any other proprietary metric names the user introduces.
 
 ### Metric definitions
 
@@ -89,7 +88,7 @@ The skill picks one lens (or asks). Each lens has a canonical metrics set:
 | **Transactional / marketplace** | GMV, take rate, buyer/seller IDs, order tables | GMV trend, buyer cohort retention, frequency × order-size, take rate |
 | **PE deal review** | Entry EBITDA, leverage, exit assumptions, hold period | IRR, MOIC, returns waterfall, sensitivity by entry/exit/growth/leverage |
 
-If signals are mixed (e.g., a kava bar with a subscription tier), apply two lenses side by side.
+If signals are mixed (e.g., a brick-and-mortar business with a subscription tier), apply two lenses side by side.
 
 ### Posture: just analyze, don't stall
 
@@ -319,7 +318,7 @@ Pick the lens from Phase 1 classification. Apply the right metrics; **do not ble
 - Modifier attach rate, void rate.
 - Daypart × day-of-week heatmap.
 - Repeat-visit rate (loyalty join when available; else cohort proxy).
-- **Product-line lens** (BBCO-style — generalizable): for the named product line, compute SKU velocity (units/day, trailing 7d/28d), substance/category mix, attach rate (% of tickets including the line), contribution to category GP $ and GP %, trailing slope vs other lines.
+- **Product-line lens** (when a tracked SKU class or sub-brand is in scope): for the named product line, compute SKU velocity (units/day, trailing 7d/28d), category/attribute mix, attach rate (% of tickets including the line), contribution to category GP $ and GP %, trailing slope vs other lines.
 - Reference ranges (industry-typical, not hardcoded targets): gross margin 60-75%, prime cost ≤60% good / 65% caution / >70% red, labor 25-32%, beverage cost 20-25%. State these are reference ranges, not the user's targets.
 
 **Transaction / marketplace:**
@@ -600,8 +599,8 @@ The skill picks a tier from the user's intake. Default for a monthly board-style
 
 **Leading vs lagging indicators** — surface both per dashboard:
 
-- **Leading** (predictive): pipeline coverage, feature adoption, support-ticket volume, BBCO attach trend, daypart slot fill rate.
-- **Lagging** (outcome): revenue, EBITDA, customer count, churn rate, BBCO retail GP.
+- **Leading** (predictive): pipeline coverage, feature adoption, support-ticket volume, tracked product-line attach rate trend, daypart slot fill rate.
+- **Lagging** (outcome): revenue, EBITDA, customer count, churn rate, tracked product-line GP.
 
 Always pair the predictive chain. *"Declining feature adoption (Week 1-2) → predicts churn (Week 4-6)."* When a leading indicator turns yellow/red, the report's Action Items section names the predicted lagging consequence.
 
@@ -723,7 +722,7 @@ Layer 2 fill colors (optional unless brand specified): dark-blue section headers
   - **Tech / SaaS** — ARR, NDR, CAC, LTV, Rule of 40, Magic Number.
   - **Manufacturing / industrial** — capacity utilization %, units produced, inventory turns, gross margin by product line, order backlog.
   - **Real estate / hospitality** — properties / rooms / square footage, occupancy %, ADR, RevPAR (currency), NOI, cap rate %.
-  - **Hospitality (kava bar / restaurant / retail)** — covers/day, AUR, prime cost %, beverage cost %, attach rate (matches the retail lens above).
+  - **Hospitality (bar / restaurant / cafe / retail)** — covers/day, AUR, prime cost %, beverage cost %, attach rate (matches the retail lens above).
   - **Healthcare / services** — locations, providers, visits (volume), revenue per visit (currency), payor mix %, same-store growth %.
 
 **Filename convention:** `[Target]_DataPack_YYYY-MM-DD.xlsx`. Run the `xlsx` recalc validation pass before delivery; zero formula errors required (`#REF!`, `#DIV/0!`, `#VALUE!`, etc.).
@@ -747,11 +746,11 @@ Move forward only when the exit criterion holds. If a phase fails, stop and surf
 
 **Inline (default)** — embed the framework content from all 11 source skills directly in this SKILL.md so the merge runs as one self-contained skill. No skill-tool calls during runtime.
 
-**Optional skill calls** — invoked only when the user's environment supports them, never auto-invoked:
-- `/from-kc-records` — Toast ETL refresh when KC's `kc-actuals` D1 is stale.
-- `/kc-pulse` — live-ops snapshot for KC.
-- `/scorecard-sync` — Toast → Google Sheet alignment for monthly close.
-- `/deep-research` — external benchmarks for non-KC businesses.
+**Optional skill calls** — invoked only when the user's environment has them installed and the use case fits, never auto-invoked:
+- A domain-specific ETL skill — invoke before analysis if the user's warehouse is stale and they have a refresh skill installed.
+- A live-ops / real-time dashboard skill — invoke when the user wants a current-day comparison alongside the period analysis.
+- A reporting-target sync skill — invoke when monthly close requires alignment with an external reporting destination.
+- `/deep-research` — external benchmarks when the user wants industry comparisons.
 - `/from-prompter` — prompt optimization (skill-author tool, not runtime).
 
 The skill detects when these are applicable from the user's intake and asks before invoking.
@@ -781,28 +780,28 @@ Run at the end of every analysis. Render the result as the master check.
 
 - **Asking the user "what would you like me to analyze?"** when they've provided data and a question. Just analyze it.
 - **Claiming a metric without citing a source.** Every quantitative statement gets a source pointer + row count + timestamp.
-- **Bleeding framings across lenses.** Don't use NDR for a PE deal. Don't use IRR for a kava bar's monthly review. Don't use Rule of 40 for a marketplace.
+- **Bleeding framings across lenses.** Don't use NDR for a PE deal. Don't use IRR for a retail/hospitality monthly review. Don't use Rule of 40 for a marketplace.
 - **Reporting noise variances.** Apply materiality before commentary.
 - **Asserting causation from correlation.** State the correlation; name the alternatives; recommend the controlled comparison.
 - **Skipping the master check.** It's the final answer to "is this analysis trustworthy?"
-- **Hardcoding KC tables / BBCO substance / build_interactive.py paths into the analysis.** The skill discovers structure at runtime.
+- **Hardcoding any specific business's tables, product attributes, or scripts into the analysis.** The skill discovers structure at runtime — never preprogram schema.
 - **Stalling with offers ("I could do X, Y, or Z")** instead of just running the pass.
 
 ## Examples
 
-### Example 1 — KC retail, BBCO product-line review
+### Example 1 — Retail / hospitality with product-line review
 
-User: "everything-data: April KC P&L variance with BBCO mix"
+User: "everything-data: April P&L variance with [product-line] mix"
 
 Skill behavior:
-1. Lens = Retail/hospitality (KC POS data signals).
-2. Profiles the data sources (likely `kc-actuals.daily_order_items` + `monthly_actuals` + `bbco_flavor_substance` + `time_entries` as the user has them connected).
-3. Builds April P&L with category breakdown (Kava* / Kratom* / Taps* / Mixed Drinks* / Food* / Retail* / Apparel*).
+1. Lens = Retail/hospitality (POS-style transaction data + dayparts + labor signal it).
+2. Profiles the data sources the user provided (transaction lines, monthly aggregates, labor hours, and any product-attribute mapping).
+3. Builds April P&L with the category breakdown the data actually contains (do not preprogram categories — discover them).
 4. Variance: April actual vs March prior vs budget, with volume × price × mix × timing decomposition for material variances.
 5. Prime cost % calculated.
-6. **BBCO product-line section** as the deep-dive: SKU velocity, substance mix, attach rate, contribution to retail GP.
+6. **Product-line section** as the deep-dive: SKU velocity, attribute/category mix, attach rate, contribution to category GP.
 7. Daypart × DOW heatmap.
-8. Sensitivity: BBCO 4-pack price × volume lift; traffic × ticket size.
+8. Sensitivity: tracked product-line price × volume lift; traffic × ticket size.
 9. Statistical caveats stated; QA pitfalls scanned.
 10. Markdown report + optional self-contained dashboard.
 11. Master check.
@@ -820,7 +819,7 @@ Skill behavior:
 6. LTV / CAC blended + segmented.
 7. Benchmarks vs Rule of 40, Magic Number, NDR bands, LTV:CAC, GRR, CAC payback.
 8. Sensitivity: NDR × new-logo growth.
-9. **No KC references. No BBCO. No retail framings.**
+9. **No retail or PE framings.** Pure SaaS lens.
 10. Statistical caveats; QA pitfalls.
 11. Markdown report.
 12. Master check.
@@ -843,10 +842,10 @@ Skill behavior:
 
 <!--
 Maintainer notes (do not surface to runtime users):
-- Framework only; runtime data shapes specifics. No business-specific tables preprogrammed.
-- KC + BBCO are the canonical case. When KC detected, prefer retail/hospitality lens; when BBCO mentioned, run product-line section as the deep-dive.
+- Framework only; runtime data shapes specifics. No business-specific tables, schemas, sub-brands, or product attributes preprogrammed.
+- The skill is project-agnostic. Detect the lens from data signals (POS + dayparts → retail; ARR + cohorts → SaaS; entry/exit multiples → PE; GMV + take rate → marketplace). Never hardcode any one business as the default.
 - Re-run /from-prompter when framework changes materially.
 - Do not call the 11 source skills at runtime — content already merged.
-- Do not auto-call /from-kc-records. Surface option when KC data looks stale; let the user decide.
+- Optional skill calls (ETL refresh / live-ops / scorecard sync) are surfaced from the user's installed skill set and confirmed before invoking. Never auto-call any project-specific tool.
 -->
 
