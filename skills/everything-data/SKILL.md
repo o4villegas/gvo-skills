@@ -134,7 +134,7 @@ For each column compute: null rate, distinct count + cardinality ratio, top-5 va
 | Dimension | Green | Yellow | Orange | Red |
 |---|---|---|---|---|
 | Completeness | >99% non-null | 95-99% | 80-95% | <80% |
-| Consistency | Format / type / referential / business rules / cross-column all clean | One small issue | Multiple issues | Systematic |
+| Consistency | All 5 checks clean (format, type, referential, business rules, cross-column) | 1 check fails on <1% of rows | 1-2 checks fail on 1-5% of rows OR 3+ checks fail on <1% | ≥3 checks fail on >5% of rows OR any business-rule violation rate >5% |
 | Accuracy | No placeholders, no impossible values, no round-number bias | Rare | Some | Pervasive |
 | Timeliness | Within expected cadence | One cycle late | Multiple cycles late | Stale, unclear |
 
@@ -766,7 +766,7 @@ Run at the end of every analysis. Render the result as the master check.
 - [ ] **Materiality applied**: no noise variances reported.
 - [ ] **Cross-statement integrity**: subtotals add, period roll-forwards tie, cross-references match.
 - [ ] **Business-model lens declared**: §4 lens and reasoning stated up front.
-- [ ] **Translation discipline**: no framings bled across lenses (no IRR in retail; no NDR in PE; no Magic Number in marketplace).
+- [ ] **Translation discipline — active scan**: search the rendered report for terms from non-applicable lenses. If lens=retail, the report must NOT contain `IRR`, `MOIC`, `NDR`, `ARR`, `Rule of 40`, `Magic Number`, `LTV:CAC payback`, `beat/miss vs consensus`. If lens=SaaS: no `prime cost`, `daypart`, `attach rate`, `IRR`, `MOIC`. If lens=PE: no `NDR`, `ARR cohort`, `Magic Number`, `daypart`, `prime cost`. If lens=marketplace: no `Rule of 40`, `Magic Number`, `IRR/MOIC` (unless deal context). Any off-lens term found = block render until removed or relabeled.
 - [ ] **Confidence per finding**: every non-trivial claim has %, with "to raise confidence" when material.
 - [ ] **Citation per claim**: source pointer + row count + timestamp on every quantitative statement.
 - [ ] **Statistical caveats**: at least one applicable Phase 6 caveat stated.
@@ -775,6 +775,7 @@ Run at the end of every analysis. Render the result as the master check.
 - [ ] **Scenarios validate**: hierarchy holds (Bull > Base > Bear absolute; inverted for cost %).
 - [ ] **If dashboard generated**: file path, sections list, data-size class noted.
 - [ ] **Master check rendered**: ✓ or ✗ with failing items identified.
+- [ ] **Fail-stop rule**: if master check = ✗, do NOT present the analysis as final. Return to the phase that produced the failing item, remediate, re-run the affected phases downstream, then re-render. Only ship when master check = ✓. The user reads the master check first; presenting an ✗ analysis as ready-to-act-on is the most dangerous failure mode this skill can produce.
 
 ## Anti-patterns (do not do these)
 
