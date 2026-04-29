@@ -188,6 +188,17 @@ Dialect notes (when relevant): PostgreSQL uses `||`/`ILIKE`/`DATE_TRUNC`. Snowfl
 
 Detect column types automatically. Handle missing data gracefully. Infer business domain from columns (a column named `cohort_month` + `arr` signals SaaS; `daypart` + `prime_cost` signals retail). Adapt analyses to what's actually present.
 
+### Multi-source synthesis *(from `knowledge-synthesis`)*
+
+When inputs span multiple data sources — D1 + CSV + prior analysis + manual entry — combine them deliberately:
+
+- **Cross-source deduplication.** The same fact often appears in multiple inputs. Merge when text matches, authors/timestamps cluster, the same entity is referenced, or one source cites another. Keep the most complete version; cite all sources.
+- **Authority ranking** (when sources conflict on the same fact, prefer in this order): production database → finalized report → shared spreadsheet → email → meeting notes → chat thread conclusion → chat mid-thread → draft document.
+- **Freshness scoring.** Today/this week → high confidence for current state. This month → moderate; things may have changed. Older than a month → flag as potentially outdated. Status queries weight freshness heavily; policy/factual queries weight it less.
+- **Conflict surfacing.** When sources disagree on the same fact, **surface all viewpoints with dates** — do not silently pick one. Format: "Source A (date): X. Source B (date): Y. Latest source indicates Y; A may be stale."
+- **Summarization by result-set size.** Small (1-5 sources): present each with context. Medium (5-15): group by theme, summarize each. Large (15+): high-level synthesis with drill-down option.
+- **Anti-pattern.** Never list source-by-source ("From D1: … From CSV: …"). Lead with the answer; group by topic; attribute inline.
+
 ## Phase 3 — Financial Statement Pass
 
 Build the income statement in whatever revenue categorization the data supports. **Do not preprogram categories.** If categories aren't obvious, profile and ask.
@@ -389,6 +400,31 @@ For deal/outcome lenses (PE + select SaaS): decompose into Growth × Multiple ×
 
 For operating businesses: decompose Performance into Volume × Price × Mix × Margin × One-Offs.
 
+### Sensitivity table mechanics *(from `dcf-model`)*
+
+A sensitivity table is a **simple grid with formulas in every cell** — *not* Excel's "Data Table" feature (which can't be automated programmatically and requires manual user steps). For an Excel deliverable, write each cell explicitly via openpyxl loops; a 5×5 grid = 25 formulas. Three tables = 75 formulas. This is required, not optional. For a markdown / HTML deliverable, pre-compute the grid in code and embed the result.
+
+### INDEX consolidation pattern *(from `dcf-model`, replaces nested-IF anti-pattern)*
+
+When scenarios drive multiple downstream calculations, use a **consolidation column** with INDEX/OFFSET, not nested IFs scattered through projections:
+
+```
+✓ =INDEX(B10:D10, 1, $B$6)            (case selector at $B$6: 1=Bear, 2=Base, 3=Bull)
+✗ =IF($B$6=1, B10, IF($B$6=2, C10, D10))  (scattered IFs — fragile, hard to audit)
+```
+
+Centralizes scenario logic; makes audits clean.
+
+### Terminal value sanity check *(from `dcf-model`)*
+
+When a DCF or valuation result is presented, terminal value (PV of perpetuity) should be **50-70% of enterprise value**. Outside this band:
+- **>75%**: model is over-reliant on terminal assumptions; tighten near-term projections or shorten the explicit period.
+- **<40%**: terminal assumptions may be too conservative; cross-check against industry comparables.
+
+### Mid-year convention *(from `dcf-model`)*
+
+For DCF or any periodic-cash-flow discounting, assume cash flows occur mid-period: discount periods are 0.5, 1.5, 2.5, … instead of 1, 2, 3. Discount factor = 1 / (1+r)^period. Mirrors when revenue actually arrives during a year. Required terminal-growth constraint: **terminal growth < WACC** (otherwise infinite value).
+
 ## Phase 6 — Statistical Caveats
 
 Apply during analysis and verification. Universal, source-agnostic. State at least one applicable caveat per report.
@@ -533,7 +569,74 @@ Mark every non-trivial claim with `confidence X%`. Pair with `to raise confidenc
 - Print-friendly when relevant.
 - Accessibility: alt text describing the insight, contrast, no info conveyed only by spatial position.
 
-### B. Interactive HTML dashboard (when scope justifies)
+### B. KPI structure & decision rules *(from `kpi-dashboard`)*
+
+Before rendering any dashboard, decide the tier and pick the KPIs.
+
+**Tiered dashboard architecture:**
+
+| Tier | Audience | Length | Cadence | Content |
+|---|---|---|---|---|
+| 1 | CEO / C-suite | 1 page | Daily or weekly | 5-8 company KPIs, status indicators, top risks/opportunities, action items |
+| 2 | Functional VP | 1 page each | Daily or weekly | Sales / Marketing / Product / CS / Finance / Ops — KPI sets specific to the function |
+| 3 | Operational team | Detailed, multi-section | Daily | Drivers behind Tier 2 KPIs, line-level detail |
+
+The skill picks a tier from the user's intake. Default for a monthly board-style review: Tier 1. Default for an analyst's deep-dive: Tier 3.
+
+**KPI documentation** — for each KPI surfaced in a dashboard, capture:
+
+| Field | Example (retail) | Example (SaaS) |
+|---|---|---|
+| Name | Prime cost % | Net Revenue Retention |
+| Owner | GM | VP Sales |
+| Definition | (COGS + labor) / revenue | (End ARR from beg cohort − churn − contraction + expansion) / Beg ARR |
+| Target | ≤60% | >110% |
+| Threshold (yellow) | 60-65% | 100-110% |
+| Alert (red) | >65% | <100% |
+| Data source | `daily_order_items` + `time_entries` | `revenue.cohort_arr` + `revenue.churn` |
+| Update frequency | Weekly | Monthly |
+| Strategic link | Sustain margin while growing | Sustain efficient growth |
+| Decision rules | >65% → escalate; cut prep waste; renegotiate vendor pricing | <100% → escalate; launch retention initiative |
+
+**Leading vs lagging indicators** — surface both per dashboard:
+
+- **Leading** (predictive): pipeline coverage, feature adoption, support-ticket volume, BBCO attach trend, daypart slot fill rate.
+- **Lagging** (outcome): revenue, EBITDA, customer count, churn rate, BBCO retail GP.
+
+Always pair the predictive chain. *"Declining feature adoption (Week 1-2) → predicts churn (Week 4-6)."* When a leading indicator turns yellow/red, the report's Action Items section names the predicted lagging consequence.
+
+**Status indicators** — apply to every KPI:
+
+| Symbol | Meaning |
+|---|---|
+| ✓ (green) | On track or exceeding target |
+| ⚠ (yellow) | Slightly off track — monitor |
+| ✗ (red) | Significantly off track — action required |
+| ↑ / → / ↓ | Trend direction |
+
+**Executive scorecard** (Tier 1 deliverable when scope is monthly review):
+
+```
+EXECUTIVE SCORECARD — [Period]
+
+[KPI 1]: [value]
+  Month: [actual]   Target: [target]   Status: ✓/⚠/✗
+  YTD:   [ytd]      Target: [ytd target]   Trend: ↑/→/↓
+  YoY:   [growth %]
+
+[KPI 2-8 in same shape]
+
+Key Risks & Opportunities
+• [risk 1 with mitigation owner + date]
+• [opportunity 1 with action]
+
+Narrative (200-250 words)
+[Lead sentence on the period's headline. What drove the variance. One concern with the active mitigation. Next-month priorities (max 3).]
+```
+
+Always pair the scorecard with the narrative — that's where the analyst translates the numbers into a story leadership can act on.
+
+### C. Interactive HTML dashboard (when scope justifies)
 
 Generate a single self-contained `.html` file using the Chart.js patterns from `interactive-dashboard-builder`. Structure:
 
@@ -578,6 +681,52 @@ Required elements:
 | >100,000 | Not suitable for client-side dashboard — paginate or use a BI tool. |
 
 Limit line charts to <500 points per series. Limit bar charts to <50 categories. Disable chart animations when many charts on one page.
+
+### D. Excel data pack — audit-grade option *(from `datapack-builder`)*
+
+When the user requests audit-grade output, IC-ready material, or "give me the underlying spreadsheet" — generate a structured Excel data pack alongside the markdown report. Defer Excel file creation to the `xlsx` skill (it owns the recalc validation pass).
+
+**Standard 8-tab structure** (skip tabs the data doesn't support; note their absence):
+
+1. Executive Summary — one-page overview, financial snapshot table, 3-5 highlights
+2. Historical Financials (Income Statement) — 3-5 years actuals, revenue breakdown, margins
+3. Balance Sheet — assets / liabilities / equity (when full statements available)
+4. Cash Flow Statement — operating / investing / financing (when full statements available)
+5. Operating Metrics — non-financial KPIs (units, customers, locations) — **no $ signs on counts**
+6. Property/Segment Performance — breakdown by location / product line / business unit
+7. Market Analysis — industry context, competitive positioning, peer benchmarks
+8. Investment Highlights / Action Items — narrative summary
+
+**Format-detection rules** (apply to every cell based on column/row label):
+
+| Trigger words | Format | Example |
+|---|---|---|
+| Revenue, Sales, Income, EBITDA, Profit, Cost, Cash, Debt, CapEx (financial) | Currency `$#,##0.0` (millions) or `$#,##0`; negatives in parentheses `$(123)` | $50.0, $(15.0) |
+| Units, Stores, Customers, Employees, Headcount (counts) | Number `#,##0` — **no $** | 1,250 stores |
+| Margin, Growth, Rate, Yield, Return, Utilization, Occupancy | Percentage `0.0%` (display 15.0% not 0.15) | 15.0% |
+| Year columns (2024, 2025E) | Text — prevents comma insertion | 2024, 2025E |
+
+**Font color = semantic role** (mandatory, not decoration):
+
+- **Blue** (RGB 0,0,255) — every hardcoded input (historical actuals, assumptions).
+- **Black** (RGB 0,0,0) — every formula or calculation.
+- **Green** (RGB 0,128,0) — links to other sheets / cross-tab references.
+
+Layer 2 fill colors (optional unless brand specified): dark-blue section headers + white text; light-blue sub-headers; light-green input cells; white calculated cells. **Font color says WHAT it is. Fill color says WHERE it sits.**
+
+**Discipline rules:**
+
+- **Every calculated number is formula-based** — no hardcoded subtotals, totals, ratios, or derived metrics.
+- **Cell comments cite source** — every blue input has a comment in this format: `Source: [System/Document], [Date], [Reference], [URL if applicable]`.
+- **Adjustment schedule on every normalization** — restructuring add-backs, SBC treatment, acquisition costs, related-party normalization. Document what was adjusted, why, dollar impact, and recurrence assessment.
+- **Industry adaptations** for Tab 5 (when the lens detects a specific industry):
+  - **Tech / SaaS** — ARR, NDR, CAC, LTV, Rule of 40, Magic Number.
+  - **Manufacturing / industrial** — capacity utilization %, units produced, inventory turns, gross margin by product line, order backlog.
+  - **Real estate / hospitality** — properties / rooms / square footage, occupancy %, ADR, RevPAR (currency), NOI, cap rate %.
+  - **Hospitality (kava bar / restaurant / retail)** — covers/day, AUR, prime cost %, beverage cost %, attach rate (matches the retail lens above).
+  - **Healthcare / services** — locations, providers, visits (volume), revenue per visit (currency), payor mix %, same-store growth %.
+
+**Filename convention:** `[Target]_DataPack_YYYY-MM-DD.xlsx`. Run the `xlsx` recalc validation pass before delivery; zero formula errors required (`#REF!`, `#DIV/0!`, `#VALUE!`, etc.).
 
 ## Phase 9 — Workflow
 
