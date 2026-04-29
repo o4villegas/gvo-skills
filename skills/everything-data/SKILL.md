@@ -11,7 +11,7 @@ description: >
   single master-check. Trigger on "/everything-data", "everything data on [X]",
   "P&L variance for [X]", "scorecard deep dive on [X]", "full data audit on [X]",
   "unit economics for [X]", "data report on [X]", "product-line review for [X]",
-  "variance report", "complete analysis on [X]".
+  "variance report".
 origin: gvo-skills (merge of 3-statements, earnings-analysis, returns-analysis, unit-economics, data-exploration, data-validation, interactive-dashboard-builder, statistical-analysis, data-visualization, sql-queries, csv-data-summarizer)
 ---
 
@@ -762,7 +762,7 @@ Run at the end of every analysis. Render the result as the master check.
 - [ ] **Source verification**: every data input named with "as of" date and row count.
 - [ ] **Profile pass**: completeness rubric scored; any column <95% complete called out as caveat.
 - [ ] **Calculation checks**: aggregation grain, denominators, joins, deduplication all verified.
-- [ ] **Reasonableness**: every key number passes the smell test (magnitude, range, trend continuity).
+- [ ] **Reasonableness**: percentages in [0, 100]; counts ≥ 0; period-over-period changes <50% unless explained; no exact-round-number-only distributions (suggests filter or default-value bug); revenue/EBITDA in expected order of magnitude vs prior periods; results do NOT perfectly confirm the hypothesis (reality is messier).
 - [ ] **Materiality applied**: no noise variances reported.
 - [ ] **Cross-statement integrity**: subtotals add, period roll-forwards tie, cross-references match.
 - [ ] **Business-model lens declared**: §4 lens and reasoning stated up front.
