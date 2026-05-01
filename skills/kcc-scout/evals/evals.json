@@ -1,0 +1,53 @@
+{
+  "skill_name": "kcc-scout",
+  "evals": [
+    {
+      "id": 1,
+      "name": "broad-sweep",
+      "prompt": "kcc-scout — what's coming to Tampa Bay in the next 6 weeks?",
+      "expected_output": "Run summary line. Markdown table of top opportunities (≤10 rows) with columns: #, Opportunity, Type (1/2/3/4/Author/Local/Festival/Wellness/DJ/Meetup), Date, Venue, Score (X/12 with F·P·R·A breakdown), Hook, Source. Tour routing callout if any Type 1/2 intercepts found. Just-below-threshold miss list (3-5 items). Gaps callout. Threshold-tuning note from score_calibrator.py."
+    },
+    {
+      "id": 2,
+      "name": "indie-intercept-focus",
+      "prompt": "Any indie or DIY acts touring through Tampa or St. Pete in May we could intercept for KCC?",
+      "expected_output": "Filtered output focused on Type 1 and Type 2 acts. Heavy emphasis on Jannus Live and Bayboro Brewing as venues. Tour routing analysis prominent — every surfaced opportunity should have routing context (where did the artist play before, where next, is there an off-night). Type 3 and Type 4 acts should be absent or in the miss list with explanation. Gaps callout should mention if no off-nights were found in the date window."
+    },
+    {
+      "id": 3,
+      "name": "festival-piggyback",
+      "prompt": "Find me a piggyback play around the Clearwater Seafood and Music Festival in late April",
+      "expected_output": "Output focused on Festival-type opportunities and adjacent activations. Should propose KCC as off-site / afterparty / daytime adjacent programming. Should reference proximity to Coachman Park (host venue, ~1 mile from KCC). Should NOT pitch unrelated touring acts as the primary opportunity. Hooks should use Festival templates from outreach-hooks.md."
+    },
+    {
+      "id": 4,
+      "name": "no-trigger-control",
+      "prompt": "What's a good cocktail recipe for an old fashioned?",
+      "expected_output": "Skill should NOT trigger. This is a control case to verify the description doesn't over-trigger on unrelated queries."
+    },
+    {
+      "id": 5,
+      "name": "implicit-trigger",
+      "prompt": "We should book someone interesting at KCC this month — any ideas?",
+      "expected_output": "Skill SHOULD trigger even though the user didn't say 'kcc-scout' or 'scout opportunities'. The phrase 'book someone at KCC' is a clear implicit trigger. Output should follow the standard format."
+    },
+    {
+      "id": 6,
+      "name": "near-miss-no-trigger",
+      "prompt": "Draft a pitch email to a band manager about KCC",
+      "expected_output": "Skill should NOT trigger — this is downstream outreach drafting, which belongs to message_compose_v1. The skill description's 'Do NOT trigger' clause covers this case explicitly. If the skill triggers anyway, the description needs more precise negative-trigger language."
+    },
+    {
+      "id": 7,
+      "name": "ambiguous-band-question",
+      "prompt": "What's that indie band that played Jannus last month?",
+      "expected_output": "Skill should NOT trigger — this is asking about past events, not surfacing future opportunities. The skill is forward-looking by design. Past-event lookups should fall through to web search or conversation_search."
+    },
+    {
+      "id": 8,
+      "name": "explicit-trigger-with-pursued-list",
+      "prompt": "kcc-scout — find me opportunities for next month, but skip anything by Cavetown, Tycho, or Bonnie Prince Billy because we already pitched them",
+      "expected_output": "Skill should trigger and use the provided pursued list as exclusion filter. Output should not contain any of the named acts even if they appear in source data. Run summary should note '3 acts on pursued list excluded'."
+    }
+  ]
+}
