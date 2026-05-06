@@ -1,11 +1,14 @@
 # OS artifacts
-*:Zone.Identifier
+*Zone.Identifier
 .DS_Store
 Thumbs.db
 
 # IDE
 .vscode/
 .idea/
+
+# Per-checkout Claude Code config (local permissions, not portable)
+.claude/
 
 # Python caches (nexus pipeline)
 __pycache__/
