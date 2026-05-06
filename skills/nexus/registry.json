@@ -664,7 +664,7 @@
       "id": "prd-writer__imp_25b43ec5",
       "name": "prd-writer",
       "description": "Write comprehensive Product Requirements Documents with user stories, acceptance criteria, technical specifications, wireframe descriptions, and prioritization frameworks (RICE, MoSCoW). Create clear specifications for product teams.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/09-product-management/prd-writer/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/09-product-management/prd-writer/SKILL.md",
       "category": "product",
       "tags": [],
       "triggers": [
@@ -680,7 +680,7 @@
       "id": "feature-spec__imp_66ae7002",
       "name": "feature-spec",
       "description": "Write detailed feature specifications with functional requirements, edge cases, data models, API contracts, and UX flows. Create comprehensive technical specifications that enable clear implementation.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/09-product-management/feature-spec/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/09-product-management/feature-spec/SKILL.md",
       "category": "product",
       "tags": [],
       "triggers": [
@@ -695,7 +695,7 @@
       "id": "roadmap-builder__imp_dec7a947",
       "name": "roadmap-builder",
       "description": "Build product roadmaps with quarterly planning, feature prioritization, dependency mapping, and stakeholder alignment. Create actionable roadmaps that communicate strategy and guide execution.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/09-product-management/roadmap-builder/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/09-product-management/roadmap-builder/SKILL.md",
       "category": "product",
       "tags": [],
       "triggers": [
@@ -710,7 +710,7 @@
       "id": "sprint-planning__imp_586f3595",
       "name": "sprint-planning",
       "description": "Plan sprints with story point estimation, capacity planning, sprint goals, and retrospective frameworks. Organize teams for effective iteration with clear goals, realistic commitments, and continuous improvement.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/09-product-management/sprint-planning/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/09-product-management/sprint-planning/SKILL.md",
       "category": "product",
       "tags": [],
       "triggers": [
@@ -725,7 +725,7 @@
       "id": "data-exploration__imp_2afd34b7",
       "name": "data-exploration",
       "description": "Profile and explore datasets to understand their shape, quality, and patterns before analysis. Use when encountering a new dataset, assessing data quality, discovering column distributions, identifying nulls and outliers, or deciding which dimensions to analyze.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/10-data-analytics/data-exploration/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/10-data-analytics/data-exploration/SKILL.md",
       "category": "data",
       "tags": [],
       "triggers": [
@@ -740,7 +740,7 @@
       "id": "data-visualization__imp_ae050a74",
       "name": "data-visualization",
       "description": "Create effective data visualizations with Python (matplotlib, seaborn, plotly). Use when building charts, choosing the right chart type for a dataset, creating publication-quality figures, or applying design principles like accessibility and color theory.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/10-data-analytics/data-visualization/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/10-data-analytics/data-visualization/SKILL.md",
       "category": "data",
       "tags": [],
       "triggers": [
@@ -755,7 +755,7 @@
       "id": "sql-queries__imp_6eab611a",
       "name": "sql-queries",
       "description": "Write correct, performant SQL across all major data warehouse dialects (Snowflake, BigQuery, Databricks, PostgreSQL, etc.). Use when writing queries, optimizing slow SQL, translating between dialects, or building complex analytical queries with CTEs, window functions, or aggregat...",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/10-data-analytics/sql-queries/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/10-data-analytics/sql-queries/SKILL.md",
       "category": "data",
       "tags": [],
       "triggers": [
@@ -770,7 +770,7 @@
       "id": "csv-data-summarizer__imp_e9f7fc5c",
       "name": "csv-data-summarizer",
       "description": "Analyzes CSV files, generates summary stats, and plots quick visualizations using Python and pandas.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/10-data-analytics/csv-data-summarizer/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/10-data-analytics/csv-data-summarizer/SKILL.md",
       "category": "data",
       "tags": [],
       "triggers": [
@@ -785,7 +785,7 @@
       "id": "sop-builder__imp_055637f4",
       "name": "sop-builder",
       "description": "Create Standard Operating Procedures with step-by-step workflows, RACI matrices, process maps, approval chains, and version control",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/07-operations/sop-builder/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/07-operations/sop-builder/SKILL.md",
       "category": "operations",
       "tags": [],
       "triggers": [
@@ -800,7 +800,7 @@
       "id": "business-case-builder__imp_bf130297",
       "name": "business-case-builder",
       "description": "Build business cases with cost-benefit analysis, ROI calculations, risk assessment, implementation timeline, and stakeholder analysis",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/07-operations/business-case-builder/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/07-operations/business-case-builder/SKILL.md",
       "category": "operations",
       "tags": [],
       "triggers": [
@@ -815,7 +815,7 @@
       "id": "project-status-report__imp_741a5608",
       "name": "project-status-report",
       "description": "Generate project status reports with RAG status, milestones, risks, blockers, resource utilization, and executive summaries",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/07-operations/project-status-report/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/07-operations/project-status-report/SKILL.md",
       "category": "operations",
       "tags": [],
       "triggers": [
@@ -830,7 +830,7 @@
       "id": "qbr-builder__imp_ccd4657b",
       "name": "qbr-builder",
       "description": "Create Quarterly Business Reviews with account health scores, usage analytics, ROI analysis, expansion opportunities, and risk mitigation",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/11-customer-success/qbr-builder/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/11-customer-success/qbr-builder/SKILL.md",
       "category": "customer-success",
       "tags": [],
       "triggers": [
@@ -845,7 +845,7 @@
       "id": "churn-analysis__imp_ebee97b8",
       "name": "churn-analysis",
       "description": "Analyze customer churn patterns, identify at-risk accounts, create retention playbooks, and build early warning systems",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/11-customer-success/churn-analysis/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/11-customer-success/churn-analysis/SKILL.md",
       "category": "customer-success",
       "tags": [],
       "triggers": [
@@ -860,7 +860,7 @@
       "id": "campaign-planner__imp_a4b54a19",
       "name": "campaign-planner",
       "description": "Plan comprehensive marketing campaigns from strategy through execution. Develop campaign briefs, select optimal channels, create timelines, allocate budgets, define targeting parameters, design A/B testing strategies, and establish performance measurement frameworks.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/04-marketing/campaign-planner/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/04-marketing/campaign-planner/SKILL.md",
       "category": "marketing",
       "tags": [],
       "triggers": [
@@ -875,7 +875,7 @@
       "id": "email-marketing__imp_7a38ac0d",
       "name": "email-marketing",
       "description": "Create and optimize email marketing campaigns including sequences, newsletters, drip campaigns. Design subject line strategies, develop segmentation approaches, implement A/B testing, and establish analytics tracking for email performance.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/04-marketing/email-marketing/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/04-marketing/email-marketing/SKILL.md",
       "category": "marketing",
       "tags": [],
       "triggers": [
@@ -890,7 +890,7 @@
       "id": "contract-review__imp_bb14c53c",
       "name": "contract-review",
       "description": "Review contracts against your organization's negotiation playbook, flagging deviations and generating redline suggestions. Use when reviewing vendor contracts, customer agreements, or any commercial agreement where you need clause-by-clause analysis against standard positions.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/06-legal-compliance/contract-review/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/06-legal-compliance/contract-review/SKILL.md",
       "category": "legal",
       "tags": [],
       "triggers": [
@@ -905,7 +905,7 @@
       "id": "invoice-organizer__imp_02e1ba00",
       "name": "invoice-organizer",
       "description": "Automatically organizes invoices and receipts for tax preparation by reading messy files, extracting key information, renaming them consistently, and sorting them into logical folders. Turns hours of manual bookkeeping into minutes of automated organization.",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/02-finance-accounting/invoice-organizer/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/invoice-organizer/SKILL.md",
       "category": "finance",
       "tags": [],
       "triggers": [
@@ -920,7 +920,7 @@
       "id": "strategic-planning__imp_45c8a8e9",
       "name": "strategic-planning",
       "description": "ACTIVATE when developing long-term strategy, setting OKRs, creating vision statements, building SWOT analyses, designing strategic frameworks, defining company direction, planning multi-year initiatives, or aligning organizational strategy with business goals. Executive must thin...",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/01-executive-leadership/strategic-planning/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/01-executive-leadership/strategic-planning/SKILL.md",
       "category": "executive",
       "tags": [],
       "triggers": [
@@ -936,7 +936,7 @@
       "id": "3-statements__imp_0bf518dc",
       "name": "3-statements",
       "description": "Complete, populate and fill out 3-statement financial model templates (Income Statement, Balance Sheet, Cash Flow Statement) . Use when asked to fill out model templates, complete existing model frameworks, populate financial models with data, complete a partially filled IS/BS/CF...",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/02-finance-accounting/3-statements/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/3-statements/SKILL.md",
       "category": "finance",
       "tags": [],
       "triggers": [
@@ -951,7 +951,7 @@
       "id": "check-model__imp_ee9920dd",
       "name": "check-model",
       "description": "Debug and audit financial models for errors — circular references, broken formulas, hardcoded overrides, balance sheet imbalances, cash flow mismatches, and logic gaps. Use when a model isn't tying, producing unexpected results, or before sending to a client or IC. Triggers on \"d...",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/02-finance-accounting/check-model/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/check-model/SKILL.md",
       "category": "finance",
       "tags": [],
       "triggers": [
@@ -966,7 +966,7 @@
       "id": "model-update__imp_ad1e0c13",
       "name": "model-update",
       "description": "Update financial models with new data — quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags material changes. Use after earnings, guidance updates, or when assumptions need refreshing. Triggers on \"u...",
-      "path": "../awesome-claude-corporate-skills-main/awesome-claude-corporate-skills-main/02-finance-accounting/model-update/SKILL.md",
+      "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/model-update/SKILL.md",
       "category": "finance",
       "tags": [],
       "triggers": [
