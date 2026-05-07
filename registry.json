@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated": "2026-04-16T20:15:00Z",
+  "generated": "2026-05-07T21:07:42Z",
   "skills": [
     {
       "id": "agentic-engineering__imp_2b52be86",
@@ -46,7 +46,7 @@
     {
       "id": "claude-code-kit__imp_local",
       "name": "claude-code-kit",
-      "description": "Boris Cherny's Claude Code best-practices kit — 6 slash commands (verify, commit-push-pr, fix-errors, pr-feedback, new-feature, review), 4 subagents (build-validator, code-architect, code-simplifier, verify-app), and project templates (CLAUDE.md, settings.json, hooks.json). Use when bootstrapping a new project or need lightweight per-project slash commands.",
+      "description": "Boris Cherny's Claude Code best-practices kit \u2014 6 slash commands (verify, commit-push-pr, fix-errors, pr-feedback, new-feature, review), 4 subagents (build-validator, code-architect, code-simplifier, verify-app), and project templates (CLAUDE.md, settings.json, hooks.json). Use when bootstrapping a new project or need lightweight per-project slash commands.",
       "path": "skills/claude-code-kit/SKILL.md",
       "category": "implementation",
       "tags": [
@@ -277,6 +277,41 @@
       "triggers": [],
       "isActive": true,
       "source": "slavingia/skills"
+    },
+    {
+      "id": "gvo-router__imp_local",
+      "name": "gvo-router",
+      "description": "Cloud (claude.ai) entry-point router for the gvo-skills library. Activates on non-trivial work requests (build/create/implement/fix/plan/design/improve/review), classifies via context capture, spawns a 3-tier opus-only organization (Director -> Domain Leads -> Workers + independent Auditor), and gates every complete/passed/verified claim with literal command output as evidence. Fully autonomous - logs assumptions for post-hoc reversal. Distinct from nexus (Claude Code) and conductor (state persistence).",
+      "path": "skills/gvo-router/SKILL.md",
+      "category": "workflow",
+      "tags": [
+        "router",
+        "orchestrator",
+        "cloud",
+        "claude.ai",
+        "opus",
+        "autonomous"
+      ],
+      "triggers": [
+        "build me",
+        "create",
+        "implement",
+        "fix",
+        "plan",
+        "design",
+        "review",
+        "improve",
+        "make this",
+        "set up",
+        "scaffold",
+        "help me with",
+        "let's build",
+        "route this",
+        "use the router",
+        "gvo-router"
+      ],
+      "isActive": true,
+      "source": "local/gvo-skills"
     },
     {
       "id": "karpathy-coder__imp_28f99488",

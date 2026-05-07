@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated": "2026-05-06T20:14:49Z",
+  "generated": "2026-05-07T21:07:42Z",
   "skills": [
     {
       "id": "agentic-engineering__imp_2b52be86",
@@ -46,7 +46,7 @@
     {
       "id": "claude-code-kit__imp_local",
       "name": "claude-code-kit",
-      "description": "Boris Cherny's Claude Code best-practices kit — 6 slash commands (verify, commit-push-pr, fix-errors, pr-feedback, new-feature, review), 4 subagents (build-validator, code-architect, code-simplifier, verify-app), and project templates (CLAUDE.md, settings.json, hooks.json). Use when bootstrapping a new project or need lightweight per-project slash commands.",
+      "description": "Boris Cherny's Claude Code best-practices kit \u2014 6 slash commands (verify, commit-push-pr, fix-errors, pr-feedback, new-feature, review), 4 subagents (build-validator, code-architect, code-simplifier, verify-app), and project templates (CLAUDE.md, settings.json, hooks.json). Use when bootstrapping a new project or need lightweight per-project slash commands.",
       "path": "../claude-code-kit/SKILL.md",
       "category": "implementation",
       "tags": [
@@ -238,7 +238,7 @@
     {
       "id": "from-prompter__imp_136fd7f9",
       "name": "from-prompter",
-      "description": "Autonomous Claude Code prompt engineer and optimizer. Crafts battle-ready agent prompts from user context, then iteratively improves them using a Karpathy-style autoresearch loop — one change per round, scored against a checklist, until the prompt hits 90%+ consistently.",
+      "description": "Autonomous Claude Code prompt engineer and optimizer. Crafts battle-ready agent prompts from user context, then iteratively improves them using a Karpathy-style autoresearch loop \u2014 one change per round, scored against a checklist, until the prompt hits 90%+ consistently.",
       "path": "skills/from-prompter/SKILL.md",
       "category": "domain",
       "tags": [
@@ -279,9 +279,44 @@
       "source": "slavingia/skills"
     },
     {
+      "id": "gvo-router__imp_local",
+      "name": "gvo-router",
+      "description": "Cloud (claude.ai) entry-point router for the gvo-skills library. Activates on non-trivial work requests (build/create/implement/fix/plan/design/improve/review), classifies via context capture, spawns a 3-tier opus-only organization (Director -> Domain Leads -> Workers + independent Auditor), and gates every complete/passed/verified claim with literal command output as evidence. Fully autonomous - logs assumptions for post-hoc reversal. Distinct from nexus (Claude Code) and conductor (state persistence).",
+      "path": "skills/gvo-router/SKILL.md",
+      "category": "workflow",
+      "tags": [
+        "router",
+        "orchestrator",
+        "cloud",
+        "claude.ai",
+        "opus",
+        "autonomous"
+      ],
+      "triggers": [
+        "build me",
+        "create",
+        "implement",
+        "fix",
+        "plan",
+        "design",
+        "review",
+        "improve",
+        "make this",
+        "set up",
+        "scaffold",
+        "help me with",
+        "let's build",
+        "route this",
+        "use the router",
+        "gvo-router"
+      ],
+      "isActive": true,
+      "source": "local/gvo-skills"
+    },
+    {
       "id": "karpathy-coder__imp_28f99488",
       "name": "karpathy-coder",
-      "description": "Use when writing, reviewing, or committing code to enforce Karpathy's 4 coding principles — surface assumptions before coding, keep it simple, make surgical changes, define verifiable goals. Triggers ",
+      "description": "Use when writing, reviewing, or committing code to enforce Karpathy's 4 coding principles \u2014 surface assumptions before coding, keep it simple, make surgical changes, define verifiable goals. Triggers ",
       "path": "skills/karpathy-coder/SKILL.md",
       "category": "planning",
       "tags": [],
@@ -314,7 +349,7 @@
     {
       "id": "mvp__imp_80f511d4",
       "name": "mvp",
-      "description": "Guide building a minimum viable product the minimalist entrepreneur way — manual first, then processized, then productized. Use when someone is ready to build their first product or struggling with sc",
+      "description": "Guide building a minimum viable product the minimalist entrepreneur way \u2014 manual first, then processized, then productized. Use when someone is ready to build their first product or struggling with sc",
       "path": "skills/mvp/SKILL.md",
       "category": "business",
       "tags": [],
@@ -648,7 +683,7 @@
     {
       "id": "full-stack-orchestration__imp_095a5a81",
       "name": "full-stack-orchestration",
-      "description": "9-step full-stack feature orchestrator: requirements → API → DB → backend → frontend → tests → security → perf → deploy.",
+      "description": "9-step full-stack feature orchestrator: requirements \u2192 API \u2192 DB \u2192 backend \u2192 frontend \u2192 tests \u2192 security \u2192 perf \u2192 deploy.",
       "path": "../full-stack-orchestration/SKILL.md",
       "category": "implementation",
       "tags": [],
@@ -950,7 +985,7 @@
     {
       "id": "check-model__imp_ee9920dd",
       "name": "check-model",
-      "description": "Debug and audit financial models for errors — circular references, broken formulas, hardcoded overrides, balance sheet imbalances, cash flow mismatches, and logic gaps. Use when a model isn't tying, producing unexpected results, or before sending to a client or IC. Triggers on \"d...",
+      "description": "Debug and audit financial models for errors \u2014 circular references, broken formulas, hardcoded overrides, balance sheet imbalances, cash flow mismatches, and logic gaps. Use when a model isn't tying, producing unexpected results, or before sending to a client or IC. Triggers on \"d...",
       "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/check-model/SKILL.md",
       "category": "finance",
       "tags": [],
@@ -965,7 +1000,7 @@
     {
       "id": "model-update__imp_ad1e0c13",
       "name": "model-update",
-      "description": "Update financial models with new data — quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags material changes. Use after earnings, guidance updates, or when assumptions need refreshing. Triggers on \"u...",
+      "description": "Update financial models with new data \u2014 quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags material changes. Use after earnings, guidance updates, or when assumptions need refreshing. Triggers on \"u...",
       "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/model-update/SKILL.md",
       "category": "finance",
       "tags": [],
