@@ -1,19 +1,18 @@
 ---
 name: gvo-router
 description: >
-  Cloud (claude.ai) entry-point router for the gvo-skills library. Activates on any
-  non-trivial work request — "build me", "create", "implement", "fix", "plan", "design",
-  "review", "improve", "make this", "set up", "scaffold", "help me with", "let's build",
-  "route this", "use the router", or any task verb attached to a project / feature / file
-  scope. Routes through a context-capture step (conductor pattern), matches skills from
-  registry.json, and executes via a three-tier organization: Director (this skill) →
-  Domain Leads → Workers, plus an independent Auditor running in parallel. Every agent
-  pinned to opus. Every "complete / passed / verified" claim must include literal command
-  output as evidence — the Auditor blocks delivery otherwise. Fully autonomous: logs
-  assumptions for post-hoc reversal, never pauses to ask the user mid-run. Distinct from
-  nexus (which targets Claude Code CLI) and from conductor (state persistence only). Use
-  whenever a request in claude.ai needs more rigor than a single skill can provide on
-  its own.
+  Cloud (claude.ai) entry-point router for the gvo-skills library. Activates on
+  non-trivial work requests: "build me", "create", "implement", "fix", "plan",
+  "design", "review", "improve", "make this", "set up", "scaffold", "help me with",
+  "let's build", "route this", "use the router", and similar task verbs.
+  Spawns a 3-tier opus-only organization (Director, Domain Leads, Workers) with
+  an independent Auditor on a parallel chain. Every complete/passed/verified
+  claim must include literal command output as evidence; the Auditor blocks
+  delivery otherwise. Fully autonomous: logs assumptions for post-hoc reversal,
+  pauses only on UNVERIFIED audit results. Routes through context capture
+  (conductor pattern) and matches skills from registry.json. Distinct from
+  nexus (Claude Code) and conductor (state persistence). Use for any claude.ai
+  request needing more rigor than a single skill provides.
 ---
 
 # gvo-router — Cloud Entry-Point Router for gvo-skills
