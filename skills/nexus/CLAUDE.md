@@ -22,7 +22,7 @@ If a future session suggests swapping to Sonnet/Haiku or disabling thinking "bec
 | Location | Status |
 |----------|--------|
 | `SKILL.md` | Auto-loaded master skill (~290 lines). Only file loaded at session start. |
-| `registry.json` | Lazy-load index. 41 skills registered. Paths resolve relative to `nexus/` — `skills/<name>/SKILL.md` for nested Tier 1 skills, `../<name>/SKILL.md` for siblings that live at the top-level repo. |
+| `registry.json` | Lazy-load index. 65 skills registered (verify with `python3 -c "import json; print(len(json.load(open('registry.json'))['skills']))"` from this directory). Paths resolve relative to `nexus/` — `skills/<name>/SKILL.md` for nested Tier 1 skills, `../<name>/SKILL.md` for siblings that live at the top-level repo, `../awesome-claude-corporate-skills-main/<category>/<name>/SKILL.md` for vendored bundle entries. |
 | `pipeline/` | 7 phase files: `01-interview.md` through `07-final-delivery.md`. |
 | `agents/` | 6 expert perspective files: `architect`, `domain-researcher`, `implementer`, `lead`, `qa-engineer`, `ux-specialist`. |
 | `skills/` | 28 nested Tier 1 skill directories extracted from source repos. An additional 13 skills live as siblings under `/c/dev/gvo-skills/skills/<name>/` and are referenced via `../<name>/` in the registry. |

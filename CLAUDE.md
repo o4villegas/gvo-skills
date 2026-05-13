@@ -21,14 +21,14 @@ gvo-skills/
 ├── skills/
 │   ├── nexus/                              # Orchestrator. Has its own CLAUDE.md — read it.
 │   │   ├── SKILL.md                        # Auto-loaded master skill
-│   │   ├── registry.json                   # Canonical skill index (single source of truth, 64 entries)
+│   │   ├── registry.json                   # Canonical skill index (single source of truth, 65 entries)
 │   │   ├── pipeline/                       # 7 phase files
 │   │   ├── agents/                         # 6 expert personas
 │   │   ├── skills/                         # 28 nested Tier-1 skills (siblings live at top level)
 │   │   └── references/                     # 16 Tier-2 reference docs
 │   ├── awesome-claude-corporate-skills-main/   # Vendored bundle (166 skills, 14 role categories)
 │   │                                       # Treat as READ-ONLY. Register via scripts/sync-bundle-registry.py.
-│   ├── <66 top-level skills>/              # gvo-router, from-prompter, kc-trivia-work, etc.
+│   ├── <67 top-level skills>/              # gvo-router, gvo-router-cc, from-prompter, kc-trivia-work, etc.
 │   ├── learned/                            # Gitignored placeholder (skill-evolution output)
 │   └── user/                               # Gitignored placeholder
 ├── mcp-server/                             # Cloudflare Worker exposing this repo to claude.ai cloud over MCP
@@ -92,7 +92,7 @@ Claude Code (Desktop/CLI) is more permissive than the cloud, but the same skill 
 
 ## The canonical registry
 
-`skills/nexus/registry.json` is the **only** registry. 64 entries (current). Both `nexus` (Claude Code orchestrator) and `gvo-router` (claude.ai cloud router) read it.
+`skills/nexus/registry.json` is the **only** registry. 65 entries (current). Three skills read it: `nexus` and `gvo-router-cc` from the local filesystem (Claude Code Desktop / CLI / VPS), and `gvo-router` via the `gvo-skills-mcp` Worker (claude.ai cloud).
 
 When adding a top-level skill:
 
@@ -204,7 +204,7 @@ npm run tail                            # stream production logs
 
 There is no `npm test`, `make`, or `pytest` anywhere in this repo. `mcp-server/` has `npm run typecheck` but no test suite. Validation is otherwise manual:
 
-- **Full validator**: `python3 scripts/validate.py` — runs in ~0.1s on the whole repo. Checks description length, frontmatter integrity, registry JSON well-formedness, and registry path resolution. Exit code 0 (clean), 1 (FAIL), or 2 (WARN-only). The `scripts/validate.py` file currently sits uncommitted in the working tree — it's intended to mature through real-world use before being wired to CI.
+- **Full validator**: `python3 scripts/validate.py` — runs in ~0.1s on the whole repo. Checks description length, frontmatter integrity, registry JSON well-formedness, and registry path resolution. Exit code 0 (clean), 1 (FAIL), or 2 (WARN-only). 42 of the FAIL rows it currently reports are pre-existing upstream defects in the vendored corporate-skills bundle (documented above as "Known-broken vendored files") — treat exit 1 as a regression signal only when new FAILs appear outside that directory.
 - **Single-file description check**: see the `python3` snippet in the 1024-character section above.
 - **Registry JSON well-formed**: `python3 -c "import json; json.load(open('skills/nexus/registry.json'))"` after every registry edit.
 - **Skill file count vs. registry count**: `find skills -maxdepth 2 -name SKILL.md | wc -l` and `grep -c '^      "name":' skills/nexus/registry.json` (already printed by `sync.sh`).

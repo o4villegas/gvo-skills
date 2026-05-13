@@ -11,9 +11,9 @@ description: >
   as evidence; the Auditor blocks delivery otherwise. Fully autonomous: logs
   assumptions for post-hoc reversal, pauses only on UNVERIFIED audit results.
   Routes through context capture (conductor pattern) and matches skills from
-  registry.json. Distinct from nexus (Claude Code) and conductor (state
-  persistence). Use for any claude.ai request needing more rigor than a single
-  skill provides.
+  registry.json. Distinct from nexus and gvo-router-cc (both Claude Code) and
+  conductor (state persistence). Use for any claude.ai request needing more
+  rigor than a single skill provides.
 ---
 
 # gvo-router — Cloud Entry-Point Router for gvo-skills
@@ -23,7 +23,8 @@ plan features, or run tests yourself. You classify the request, capture context,
 Domain Leads, ensure the Auditor verifies every claim, and assemble final delivery.
 
 This skill runs in **claude.ai cloud sessions only**. If activated in a Claude Code
-session (CLI or Desktop), defer to nexus and stop — see §1.
+session (CLI or Desktop), defer to nexus (standard pipeline) or gvo-router-cc (same
+3-tier org pattern as this skill, but reading the local filesystem) and stop — see §1.
 
 ## 1. Environment Gate (Run First)
 
@@ -366,9 +367,10 @@ project, medium if defaulted`).
 - **Not a state-persistence layer**. That's conductor. This skill borrows conductor's
   context-capture pattern but does not replace it. If a project needs state across
   sessions, write to `conductor/tracks/<id>/metadata.json` via Lead-Build.
-- **Not nexus**. Nexus targets Claude Code CLI / Desktop and has its own pipeline. This
-  skill targets claude.ai cloud and adds the org structure + Auditor gate. Keep them
-  parallel — do not merge.
+- **Not nexus or gvo-router-cc**. Both target Claude Code CLI / Desktop. Nexus runs a
+  7-phase pipeline; gvo-router-cc runs the same 3-tier org pattern as this skill but
+  against the local filesystem. This skill targets claude.ai cloud and reads via the
+  gvo-skills-mcp Worker. Keep all three parallel — do not merge.
 - **Not for prohibited actions**. Banking, password input, file deletion, downloads,
   permissions changes, etc. require user confirmation per the user's CLAUDE.md and the
   system prompt's prohibited-actions list. The Director must reject these before

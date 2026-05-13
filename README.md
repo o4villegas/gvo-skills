@@ -32,22 +32,33 @@ gvo-skills/
 ├── skills/                       # All skill directories
 │   ├── nexus/                    # Orchestrator + bundled sub-skills + canonical registry
 │   │   └── registry.json         # Canonical skill index (single source of truth)
+│   ├── gvo-router/               # claude.ai cloud entry-point router (3-tier org + Auditor)
+│   ├── gvo-router-cc/            # Claude Code port of gvo-router
 │   ├── from-prompter/            # Prompt engineering
 │   ├── pdf/                      # PDF processing
 │   ├── ...                       # All other skills
 │   └── review-hunter/            # Review aggregation
-├── scripts/sync-bundle-registry.py  # Curated bundle import tool
+├── mcp-server/                   # Cloudflare Worker exposing this repo to claude.ai over MCP
+├── scripts/
+│   ├── validate.py               # Pre-commit gate (description cap, frontmatter, registry)
+│   ├── sync-bundle-registry.py   # Curated bundle import tool
+│   └── probe-mcp-sse.sh          # Production probe for the gvo-skills-mcp Worker
 ├── setup.sh                      # First-time symlink setup
 ├── sync.sh                       # Pull + verify
 └── .gitignore
 ```
 
+For deep guidance (mcp-server architecture, skill conventions, validation, cross-env
+gotchas) read `CLAUDE.md` at the repo root.
+
 ## Adding a new skill
 
-1. Create `skills/<name>/SKILL.md` with `name:` and `description:` frontmatter
+1. Create `skills/<name>/SKILL.md` with `name:` and `description:` frontmatter (keep
+   the description under 1024 chars; aim for ≤900 for headroom)
 2. Add entry to `skills/nexus/registry.json` (the canonical registry)
-3. Commit and push
-4. Run `sync.sh` on other environments
+3. Run `python3 scripts/validate.py` to catch description-cap and frontmatter issues
+4. Commit and push
+5. Run `sync.sh` on other environments
 
 ## Windows setup (PowerShell as Admin)
 

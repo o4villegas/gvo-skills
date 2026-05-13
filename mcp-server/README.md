@@ -54,7 +54,7 @@ curl https://gvo-skills-mcp.lando555.workers.dev/health
    - **URL**: `https://gvo-skills-mcp.lando555.workers.dev/mcp`
    - **Name**: any (e.g. `gvo-skills`). The gvo-router skill scans by tool-name suffix, not server name.
    - **Auth**: none
-3. Upload the `gvo-router` skill to claude.ai (paste contents of `skills/gvo-router/SKILL.md` plus the three reference files in `skills/gvo-router/references/`).
+3. Upload the `gvo-router` skill to claude.ai. The easiest path is the pre-built bundle at `skills/gvo-router/gvo-router.zip` (contains `SKILL.md` + all three reference files in the correct directory layout). Manual alternative: paste the contents of `skills/gvo-router/SKILL.md` plus the three reference files in `skills/gvo-router/references/`.
 4. In any claude.ai session, type one of the router's trigger phrases (`build me`, `fix`, `implement`, `plan`, `use the router`, etc.). The router should:
    - Detect the codebase tools in the session catalog,
    - Read `skills/nexus/registry.json` from this Worker,
