@@ -87,7 +87,7 @@ if [ -L "$SKILLS_LINK" ] && [ -d "$SKILLS_LINK/nexus" ]; then
     echo ""
     skill_count=$(find "$SKILLS_DIR" -maxdepth 2 -name "SKILL.md" | wc -l)
     echo "  $skill_count skills available"
-    echo "  Nexus registry: $(grep -c '^      "name":' "$REPO_DIR/registry.json" 2>/dev/null || echo '?') entries"
+    echo "  Nexus registry: $(grep -c '^      "name":' "$REPO_DIR/skills/nexus/registry.json" 2>/dev/null || echo '?') entries"
 
     if [ -d "$BACKUP_DIR" ]; then
         echo ""

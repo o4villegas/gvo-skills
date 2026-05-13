@@ -1,20 +1,15 @@
 ---
 name: from-prompter
 description: >
-  Autonomous Claude Code prompt engineer and optimizer. Crafts battle-ready agent prompts
-  from user context, then iteratively improves them using a Karpathy-style autoresearch loop —
-  one change at a time, scored against a checklist, until the prompt hits 90%+ consistently.
-  Use this skill whenever the user says "from prompter", "optimize my prompt", "improve this prompt",
-  "help me write a prompt for Claude Code", "I need a coding prompt", "prompt for my agent",
-  "write me agent instructions", "write a prompt", "structure my request", "agent prompt",
-  "coding instructions", "task prompt", "prompt template", "harden this prompt",
-  "run the optimization loop", or any variation of asking for help crafting or improving a prompt
-  intended for Claude Code or a coding agent. Also trigger when the user mentions wanting to build
-  something and seems to need help structuring the request for an AI coding agent — especially if
-  they mention agent teams, sub-agents, verification, plan mode, prompt scoring, or iterative
-  improvement. This skill interviews the user, researches best practices, crafts a V0 prompt, then
-  runs an autonomous optimization loop to harden it. Scope: prompts for Claude Code and coding
-  agents specifically, not general-purpose LLM prompts.
+  Autonomous Claude Code prompt engineer. Crafts agent prompts from user context and iteratively
+  improves them via a Karpathy-style autoresearch loop — one change at a time, scored, until 90%+.
+  Trigger on "from prompter", "optimize my prompt", "improve this prompt", "help me write a prompt
+  for Claude Code", "I need a coding prompt", "prompt for my agent", "write me agent instructions",
+  "write a prompt", "structure my request", "agent prompt", "coding instructions", "task prompt",
+  "prompt template", "harden this prompt", "run the optimization loop", and variants for crafting
+  or improving prompts for Claude Code or a coding agent. Also trigger on agent teams, sub-agents,
+  verification, plan mode, prompt scoring, iterative improvement. Scope: Claude Code / coding-agent
+  prompts only, not general LLM prompts.
 ---
 
 # From Prompter — Claude Code Prompt Engineer + Autoresearch Optimizer

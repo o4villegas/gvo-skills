@@ -32,7 +32,7 @@ Before anything else, verify environment:
 |-------|-----|----------|
 | Running in claude.ai (not Claude Code) | The skill loaded as part of a claude.ai cloud session | Tell user: "gvo-router targets claude.ai cloud sessions. In Claude Code, use /nexus instead." Then stop. |
 | `from-desktop` MCP available | Scan the session tool catalog for any tool whose name ends in `__codebase_read_file`, `__codebase_search_code`, `__codebase_find_files`, `__codebase_list_directory`, or `__codebase_list_allowed_roots`. The hash prefix (e.g. `mcp__31bcb750-f1c3-...__`) varies per setup; only the suffix is stable. Capture the prefix on first match — every subsequent call uses the same prefix. | Tell user: "I need the from-desktop MCP connector (codebase-mcp-server on VPS at mcp.gvoassurancepartners.com/mcp) to access the gvo-skills library. Connect it and re-trigger." Then stop. |
-| Registry reachable | Call `<prefix>__codebase_list_allowed_roots` to confirm gvo-skills is exposed, then `<prefix>__codebase_read_file` with `path="registry.json"` and `root="gvo-skills"` (or the equivalent root id from the list_allowed_roots response). Returns JSON content. | Tell user the literal error including the tool name and the root id used. Then stop. |
+| Registry reachable | Call `<prefix>__codebase_list_allowed_roots` to confirm gvo-skills is exposed, then `<prefix>__codebase_read_file` with `path="skills/nexus/registry.json"` and `root="gvo-skills"` (or the equivalent root id from the list_allowed_roots response). Returns JSON content. | Tell user the literal error including the tool name and the root id used. Then stop. |
 
 Do not proceed past §1 unless all three checks pass. State the result of each check in
 plain English to the user before continuing.
@@ -44,9 +44,10 @@ in §1 — concrete tool name shape: `mcp__<hash>__codebase_read_file`. Required
 `{ "path": "<relative-path>", "root": "<root-id-from-list_allowed_roots>" }`. Substitute
 the gvo-skills root id throughout.
 
-1. **Registry**: `<prefix>__codebase_read_file` with `path="registry.json"` from the
-   gvo-skills repo root. This is the live skill index — do not cache, do not trust
-   prior memory of it.
+1. **Registry**: `<prefix>__codebase_read_file` with `path="skills/nexus/registry.json"`
+   from the gvo-skills repo. This is the canonical skill index — do not cache, do not
+   trust prior memory of it. (Previously a root-level `registry.json` existed as a
+   subset mirror; that file has been removed — the nexus copy is the only source.)
 2. **Conductor SKILL.md**: `<prefix>__codebase_read_file` with
    `path="skills/conductor/SKILL.md"`. You will borrow its context-capture pattern
    (product.md, tech-stack.md, workflow.md, tracks.md).

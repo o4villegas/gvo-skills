@@ -29,22 +29,23 @@ chmod +x setup.sh sync.sh
 
 ```
 gvo-skills/
-├── skills/              # All skill directories
-│   ├── nexus/           # Orchestrator + bundled sub-skills + registry
-│   ├── from-prompter/   # Prompt engineering
-│   ├── pdf/             # PDF processing
-│   ├── ...              # All other skills
-│   └── review-hunter/   # Code review hunter
-├── registry.json        # Nexus skill index (root copy)
-├── setup.sh             # First-time symlink setup
-├── sync.sh              # Pull + verify
+├── skills/                       # All skill directories
+│   ├── nexus/                    # Orchestrator + bundled sub-skills + canonical registry
+│   │   └── registry.json         # Canonical skill index (single source of truth)
+│   ├── from-prompter/            # Prompt engineering
+│   ├── pdf/                      # PDF processing
+│   ├── ...                       # All other skills
+│   └── review-hunter/            # Review aggregation
+├── scripts/sync-bundle-registry.py  # Curated bundle import tool
+├── setup.sh                      # First-time symlink setup
+├── sync.sh                       # Pull + verify
 └── .gitignore
 ```
 
 ## Adding a new skill
 
-1. Create `skills/<name>/SKILL.md`
-2. Add entry to `registry.json` (and `skills/nexus/registry.json`)
+1. Create `skills/<name>/SKILL.md` with `name:` and `description:` frontmatter
+2. Add entry to `skills/nexus/registry.json` (the canonical registry)
 3. Commit and push
 4. Run `sync.sh` on other environments
 

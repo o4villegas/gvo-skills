@@ -1,22 +1,16 @@
 ---
 name: from-billy
 description: >
-  Chaos user-testing agent that stress-tests any running app by simulating a
-  technically inept, confused, impatient human. Launches the app (local dev server
-  or production URL), then runs multi-round adversarial testing using vision
-  (screenshots) and console output to verify every claim. Multiple sub-agents
-  independently test, compare findings, re-test disputed items, and reach consensus
-  before any finding is reported. After consensus, billy auto-generates a
-  remediation + retest prompt via from-prompter and gives the user the CLI command
-  to execute fixes. Trigger on "from-billy", "from billy", "billy", "chaos test", "stress test my app",
-  "test like a bad user", "break my app", "user test", "monkey test", "QA my app",
-  "test the UX", "try to break it", "use it like an idiot", "bash test", "rage test",
-  "test all the things", or any request to test an app's resilience to confused,
-  impatient, or technically unsophisticated users. Also trigger when the user says
-  "billy the app" or references testing an app from the perspective of someone who
-  doesn't know what they're doing. Distinct from ux-diagnostic which scores design
-  quality against benchmarks — billy physically interacts with the running app and
-  tries to break it through misuse, then produces a remediation prompt.
+  Chaos user-testing agent. Launches an app (local dev or production URL) and stress-tests it
+  by simulating a technically inept, confused, impatient human. Multi-round adversarial testing
+  with vision (screenshots) and console output. Multi-agent consensus on every finding before
+  reporting. After consensus, billy auto-generates a remediation prompt via from-prompter with
+  CLI commands. Trigger on "from-billy", "from billy", "billy", "billy the app", "chaos test",
+  "stress test my app", "test like a bad user", "break my app", "user test", "monkey test",
+  "QA my app", "test the UX", "try to break it", "use it like an idiot", "bash test", "rage test",
+  "test all the things", or variants on testing an app's resilience to confused or unsophisticated
+  users. Distinct from ux-diagnostic (scores design vs benchmarks); billy actually interacts with
+  the running app and tries to break it through misuse.
 ---
 
 # Billy — Chaos User-Testing Agent

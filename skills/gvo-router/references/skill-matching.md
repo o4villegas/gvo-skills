@@ -6,7 +6,7 @@ hands matched skills' content to the appropriate Lead.
 ## Inputs
 
 - The user's literal request text (verbatim — do not paraphrase before matching)
-- `registry.json` from the gvo-skills repo root (read in §2 of SKILL.md)
+- `skills/nexus/registry.json` from the gvo-skills repo — the canonical skill index (read in §2 of SKILL.md). Paths in entries are relative to `skills/nexus/`: nested skills use `skills/<name>/SKILL.md`, top-level siblings use `../<name>/SKILL.md`.
 
 ## Output
 
@@ -139,14 +139,12 @@ answer directly from training knowledge.
 - If a disabled skill would have matched, log to assumption ledger:
   `A_N: Skill X would match but is disabled in registry. Did not use it.`
 
-### Multiple Registries (Repo Root vs nexus/)
-The repo has two registries: `/registry.json` and `/skills/nexus/registry.json`.
+### Registry Location (single source of truth)
+The canonical registry is `/skills/nexus/registry.json`. A root-level `/registry.json` previously existed as a subset mirror but was removed — paths in it had drifted and gvo-router was the only consumer. Always read `skills/nexus/registry.json`.
 
-- Use `/registry.json` (root) as the primary source — it's the global index.
-- The nexus copy is for nexus's own bundled sub-skills.
-- If a skill appears in only one, use that one.
-- If a skill appears in both with different content, root wins, log an assumption:
-  `A_N: Skill X has divergent registry entries; used root copy.`
+Path resolution from nexus registry entries:
+- Nested skills (under `skills/nexus/skills/<name>/`): path is `skills/<name>/SKILL.md`
+- Top-level siblings (under `skills/<name>/`): path is `../<name>/SKILL.md`
 
 ## Loading Skills' Content
 

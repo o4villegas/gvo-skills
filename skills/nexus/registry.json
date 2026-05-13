@@ -282,7 +282,7 @@
       "id": "gvo-router__imp_local",
       "name": "gvo-router",
       "description": "Cloud (claude.ai) entry-point router for the gvo-skills library. Activates on non-trivial work requests (build/create/implement/fix/plan/design/improve/review), classifies via context capture, spawns a 3-tier opus-only organization (Director -> Domain Leads -> Workers + independent Auditor), and gates every complete/passed/verified claim with literal command output as evidence. Fully autonomous - logs assumptions for post-hoc reversal. Distinct from nexus (Claude Code) and conductor (state persistence).",
-      "path": "skills/gvo-router/SKILL.md",
+      "path": "../gvo-router/SKILL.md",
       "category": "workflow",
       "tags": [
         "router",

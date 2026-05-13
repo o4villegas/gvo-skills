@@ -1,0 +1,27 @@
+name = "gvo-skills-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-05-12"
+compatibility_flags = ["nodejs_compat"]
+
+# Bound at runtime as `c.env.<NAME>`
+[vars]
+GITHUB_OWNER = "o4villegas"
+GITHUB_REPO  = "gvo-skills"
+GITHUB_REF   = "main"
+ROOT_ID      = "gvo-skills"
+
+# KV namespace used to cache GitHub responses.
+#
+# First-time setup (run once, replace PLACEHOLDER_ID below with the returned id):
+#   npx wrangler kv:namespace create GVO_SKILLS_CACHE
+#
+# A preview namespace is optional — only needed if you'll run `wrangler dev` with
+# real KV (otherwise dev uses an in-memory shim). Create with `--preview` and
+# paste the preview id alongside.
+[[kv_namespaces]]
+binding = "CACHE"
+id      = "bdecf29ddeaa45fd86cddc5a1fabc39f"
+
+# Observability — capture logs by default; tail with `npm run tail`
+[observability]
+enabled = true
