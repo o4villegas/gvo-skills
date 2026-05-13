@@ -46,47 +46,88 @@ app.get("/health", (c) =>
   }),
 );
 
+// SSE framing for a single JSON-RPC response. The MCP Streamable HTTP transport spec
+// (2025-03-26+) allows the server to choose application/json OR text/event-stream;
+// claude.ai's MCP client requires text/event-stream in practice, so we honor the
+// Accept header and frame accordingly.
+function sseResponse(payload: unknown, status = 200): Response {
+  const body = `event: message\ndata: ${JSON.stringify(payload)}\n\n`;
+  return new Response(body, {
+    status,
+    headers: {
+      "content-type": "text/event-stream; charset=utf-8",
+      "cache-control": "no-cache, no-transform",
+      "x-accel-buffering": "no",
+      "connection": "keep-alive",
+    },
+  });
+}
+
+function wantsSse(accept: string | undefined): boolean {
+  if (!accept) return false;
+  return accept.toLowerCase().includes("text/event-stream");
+}
+
 app.post("/mcp", async (c) => {
+  const accept = c.req.header("accept");
+  const useSse = wantsSse(accept);
+
   let body: unknown;
   try {
     body = await c.req.json();
   } catch (err) {
-    return c.json(
-      {
-        jsonrpc: "2.0",
-        id: null,
-        error: {
-          code: -32700,
-          message: "Parse error",
-          data: err instanceof Error ? err.message : String(err),
-        },
+    const errResponse = {
+      jsonrpc: "2.0" as const,
+      id: null,
+      error: {
+        code: -32700,
+        message: "Parse error",
+        data: err instanceof Error ? err.message : String(err),
       },
-      400,
-    );
+    };
+    return useSse ? sseResponse(errResponse, 400) : c.json(errResponse, 400);
   }
 
   // Batch requests are valid JSON-RPC but not used by any MCP client in practice.
-  // We accept a single request object only; batch would be added if a client needs it.
   if (Array.isArray(body)) {
-    return c.json(
-      {
-        jsonrpc: "2.0",
-        id: null,
-        error: { code: -32600, message: "Batch requests are not supported" },
-      },
-      400,
-    );
+    const errResponse = {
+      jsonrpc: "2.0" as const,
+      id: null,
+      error: { code: -32600, message: "Batch requests are not supported" },
+    };
+    return useSse ? sseResponse(errResponse, 400) : c.json(errResponse, 400);
   }
 
   const response = await handleMcpRequest(body as Record<string, unknown>, c.env);
 
-  // Notifications (no id) get a 204 — JSON-RPC says notifications have no response,
-  // but most MCP clients tolerate an empty 200. Returning 204 is the strict-correct path.
+  // Notifications (no id) get a 202 Accepted with no body per MCP Streamable HTTP spec.
   if (response === null) {
-    return new Response(null, { status: 204 });
+    return new Response(null, { status: 202 });
   }
 
-  return c.json(response);
+  return useSse ? sseResponse(response) : c.json(response);
+});
+
+// GET /mcp opens a server-initiated SSE channel. This server has no server-initiated
+// notifications, so we respond with a minimal SSE stream (a single comment line) and
+// close. Some clients refuse to talk to a server that returns 405 on GET, even though
+// the spec permits it; the empty stream keeps them happy.
+app.get("/mcp", (c) => {
+  if (!wantsSse(c.req.header("accept"))) {
+    return c.text(
+      "MCP endpoint. POST JSON-RPC 2.0 messages here. GET with 'Accept: text/event-stream' to open an SSE channel (no server notifications are sent).",
+      200,
+    );
+  }
+  return new Response(": gvo-skills-mcp has no server-initiated notifications\n\n", {
+    status: 200,
+    headers: {
+      "content-type": "text/event-stream; charset=utf-8",
+      "cache-control": "no-cache, no-transform",
+      "x-accel-buffering": "no",
+      "connection": "keep-alive",
+    },
+  });
 });
 
 export default app;
