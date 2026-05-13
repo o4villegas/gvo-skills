@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-`gvo-skills` is a centralized Claude Code skill library, kept as the single source of truth across three environments. It is pure markdown + shell — no `package.json`, no build, no tests, no CI, no linter.
+`gvo-skills` is a centralized Claude Code skill library, kept as the single source of truth across three environments. The root is pure markdown + shell — no build, no tests, no CI, no linter. The sole exception is `mcp-server/`, a TypeScript Cloudflare Worker subproject with its own `package.json` and deploy pipeline (see [The mcp-server Worker](#the-mcp-server-worker) below).
 
 | Environment | Clone | Skills symlink |
 |---|---|---|
@@ -12,28 +12,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Windows (Desktop) | `C:\dev\gvo-skills` | `C:\Users\Lando\.claude\skills -> C:\dev\gvo-skills\skills` (junction) |
 | VPS | `~/gvo-skills` | `~/.claude/skills -> ~/gvo-skills/skills` |
 
-Edits land here → `git push` → other environments pull via `./sync.sh`. Claude Code Desktop's `SessionStart` hook calls `sync.sh` automatically; CLI and VPS run it manually.
+Edits land here → `git push` → other environments pull via `./sync.sh`. Claude Code Desktop's `SessionStart` hook calls `sync.sh` automatically; CLI and VPS run it manually. Pushes that touch `mcp-server/` additionally trigger a Cloudflare Workers Builds deploy.
 
 ## Layout (the parts that matter)
 
 ```
-skills/
-├── nexus/                              # Orchestrator. Has its own CLAUDE.md — read it.
-│   ├── SKILL.md                        # Auto-loaded master skill
-│   ├── registry.json                   # Canonical skill index (single source of truth, 64 entries)
-│   ├── pipeline/                       # 7 phase files
-│   ├── agents/                         # 6 expert personas
-│   ├── skills/                         # 28 nested Tier-1 skills (siblings live at top level)
-│   └── references/                     # 16 Tier-2 reference docs
-├── awesome-claude-corporate-skills-main/   # Vendored bundle (166 skills, 14 role categories)
-│                                       # Treat as READ-ONLY. Register via scripts/sync-bundle-registry.py.
-├── <66 top-level skills>/              # gvo-router, from-prompter, kc-trivia-work, etc.
-├── learned/                            # Gitignored placeholder (skill-evolution output)
-└── user/                               # Gitignored placeholder
-scripts/sync-bundle-registry.py         # Bundle import tool (audit | stub | apply)
-scripts/validate.py                     # Manual pre-commit validator (description cap, registry integrity, etc.)
-setup.sh                                # One-time per-env install (creates symlink, registers chrome-devtools MCP)
-sync.sh                                 # Daily pull + symlink verify + inventory
+gvo-skills/
+├── skills/
+│   ├── nexus/                              # Orchestrator. Has its own CLAUDE.md — read it.
+│   │   ├── SKILL.md                        # Auto-loaded master skill
+│   │   ├── registry.json                   # Canonical skill index (single source of truth, 64 entries)
+│   │   ├── pipeline/                       # 7 phase files
+│   │   ├── agents/                         # 6 expert personas
+│   │   ├── skills/                         # 28 nested Tier-1 skills (siblings live at top level)
+│   │   └── references/                     # 16 Tier-2 reference docs
+│   ├── awesome-claude-corporate-skills-main/   # Vendored bundle (166 skills, 14 role categories)
+│   │                                       # Treat as READ-ONLY. Register via scripts/sync-bundle-registry.py.
+│   ├── <66 top-level skills>/              # gvo-router, from-prompter, kc-trivia-work, etc.
+│   ├── learned/                            # Gitignored placeholder (skill-evolution output)
+│   └── user/                               # Gitignored placeholder
+├── mcp-server/                             # Cloudflare Worker exposing this repo to claude.ai cloud over MCP
+│   ├── src/{index,mcp,tools,github}.ts     # Hono entrypoint + JSON-RPC dispatcher + tool impls + GitHub adapter
+│   ├── README.md                           # Setup, deploy, troubleshooting — read it before touching this
+│   ├── package.json                        # The ONLY npm project in this repo
+│   └── wrangler.toml                       # GITHUB_OWNER/REPO/REF + KV namespace binding
+├── scripts/
+│   ├── sync-bundle-registry.py             # Bundle import tool (audit | stub | apply)
+│   └── validate.py                         # Manual pre-commit validator (description cap, registry integrity)
+├── setup.sh                                # One-time per-env install (creates symlink, registers chrome-devtools MCP)
+└── sync.sh                                 # Daily pull + symlink verify + inventory
 ```
 
 A root-level `registry.json` previously existed as a subset mirror of nexus's. It was removed because only `gvo-router` read it and a single source of truth is cleaner. `skills/nexus/registry.json` is now the only registry.
@@ -157,21 +164,51 @@ These are someone else's repository to fix. If you care enough, file an upstream
 
 `skills/everything-claude-code/SKILL.md` also reports `NAME_DIR_MISMATCH` (`name: everything-claude-code-conventions` vs dir `everything-claude-code`) — this is an intentional historical name from when the skill was migrated. Leave it.
 
+## The mcp-server Worker
+
+`mcp-server/` is a Cloudflare Worker (TypeScript + Hono) that exposes the public GitHub state of this repo as an MCP server over HTTP. It exists because **claude.ai cloud sessions cannot read the local filesystem** — the `gvo-router` skill (cloud-side counterpart to `nexus`) needs to read `skills/nexus/registry.json` and individual SKILL.md files at runtime. The Worker proxies GitHub Raw + Tree API + a small in-Worker substring grep, cached in KV with a 5-minute TTL. It replaces the older VPS-hosted `from-desktop` MCP that the skill used to depend on.
+
+- **Deployed at**: `https://gvo-skills-mcp.lando555.workers.dev`
+- **Endpoints**: `POST /mcp` (JSON-RPC 2.0; honors both `application/json` and `text/event-stream` Accept headers — claude.ai's client requires SSE in practice), `GET /health`, `GET /` (banner), `GET /mcp` with SSE (empty-stream stub for clients that probe it)
+- **Tools** (all read-only, names match the `codebase_*` suffixes `gvo-router/SKILL.md` §1 scans for): `codebase_list_allowed_roots`, `codebase_read_file`, `codebase_list_directory`, `codebase_find_files`, `codebase_search_code`
+- **Source of truth for reads**: GitHub `main` branch via `wrangler.toml`'s `[vars]` (`GITHUB_OWNER=o4villegas`, `GITHUB_REPO=gvo-skills`, `GITHUB_REF=main`). Local working-tree changes are invisible until pushed.
+- **Trust boundary**: the public repo. No auth; anyone with the URL gets the same reads.
+- **KV namespace**: `CACHE` binding (id in `wrangler.toml`), 300s TTL per path.
+
+Detailed setup, the GitHub-API/KV cache key schema, and a troubleshooting table live in `mcp-server/README.md` — read that before deploying or debugging. A one-shot probe at `scripts/probe-mcp-sse.sh` exercises all four JSON/SSE response paths against production; run it after each deploy.
+
 ## Common commands
 
+### Repo root (skill library)
+
 ```bash
-./setup.sh                # First-time per-environment install (creates symlink, registers chrome-devtools MCP)
-./sync.sh                 # Daily: git pull --ff-only + symlink verify + inventory
-./sync.sh --force         # Skip ff-only check (rarely needed)
-git push origin main      # Triggers propagation to other envs on their next sync.sh
+./setup.sh                              # First-time per-env install (creates symlink, registers chrome-devtools MCP)
+./sync.sh                               # Daily: git pull --ff-only + symlink verify + inventory
+./sync.sh --force                       # Skip ff-only check (rarely needed)
+python3 scripts/validate.py             # Pre-commit gate: description cap, frontmatter, registry integrity
+python3 scripts/validate.py --quiet     # Summary line only
+python3 scripts/validate.py --json      # Machine-readable findings
+git push origin main                    # Triggers env propagation on next sync.sh + auto-deploys mcp-server/ if it changed
 ```
 
-There is no `npm test`, `make`, or `pytest` for this repo. Validation is manual:
+### mcp-server/ subproject (Cloudflare Worker)
+
+```bash
+cd mcp-server
+npm install                             # one-time
+npm run dev                             # wrangler dev → localhost:8787
+npm run typecheck                       # tsc --noEmit (only build-style gate in the repo)
+npm run deploy                          # wrangler deploy (skip unless out-of-band — git push to main auto-deploys)
+npm run tail                            # stream production logs
+```
+
+There is no `npm test`, `make`, or `pytest` anywhere in this repo. `mcp-server/` has `npm run typecheck` but no test suite. Validation is otherwise manual:
 
 - **Full validator**: `python3 scripts/validate.py` — runs in ~0.1s on the whole repo. Checks description length, frontmatter integrity, registry JSON well-formedness, and registry path resolution. Exit code 0 (clean), 1 (FAIL), or 2 (WARN-only). The `scripts/validate.py` file currently sits uncommitted in the working tree — it's intended to mature through real-world use before being wired to CI.
 - **Single-file description check**: see the `python3` snippet in the 1024-character section above.
 - **Registry JSON well-formed**: `python3 -c "import json; json.load(open('skills/nexus/registry.json'))"` after every registry edit.
 - **Skill file count vs. registry count**: `find skills -maxdepth 2 -name SKILL.md | wc -l` and `grep -c '^      "name":' skills/nexus/registry.json` (already printed by `sync.sh`).
+- **Worker liveness after deploy**: `curl https://gvo-skills-mcp.lando555.workers.dev/health` — expects `{"status":"ok",...}`.
 
 ## Cross-environment gotchas
 
@@ -191,7 +228,8 @@ There is no `npm test`, `make`, or `pytest` for this repo. Validation is manual:
 | Commit `.claude/` | It's gitignored — per-checkout local config only |
 | Resurrect the root `registry.json` | It was deleted on purpose; the nexus copy is canonical. Adding a second registry re-introduces drift. |
 | Try to fix vendored corporate-bundle frontmatter errors | They're upstream — file an issue at hesreallyhim/awesome-claude-corporate-skills instead |
-| Add build/test tooling unprompted | This repo is intentionally markdown+shell; no `package.json`, no CI |
+| Add build/test tooling unprompted to the repo root | The root is intentionally markdown+shell; `mcp-server/` is the one place TypeScript lives |
+| `wrangler deploy` from `mcp-server/` while debugging locally | Push to `main` instead — Cloudflare Workers Builds runs the deploy, matching the canonical pipeline. Out-of-band `npm run deploy` masks builds-config bugs. |
 
 ## Nexus internals
 
