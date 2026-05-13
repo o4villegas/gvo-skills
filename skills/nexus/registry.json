@@ -281,7 +281,7 @@
     {
       "id": "gvo-router__imp_local",
       "name": "gvo-router",
-      "description": "Cloud (claude.ai) entry-point router for the gvo-skills library. Activates on non-trivial work requests (build/create/implement/fix/plan/design/improve/review), classifies via context capture, spawns a 3-tier opus-only organization (Director -> Domain Leads -> Workers + independent Auditor), and gates every complete/passed/verified claim with literal command output as evidence. Fully autonomous - logs assumptions for post-hoc reversal. Distinct from nexus (Claude Code) and conductor (state persistence).",
+      "description": "Cloud (claude.ai) entry-point router for the gvo-skills library. Activates on non-trivial work requests (build/create/implement/fix/plan/design/improve/review), classifies via context capture, spawns a 3-tier opus organization (Director -> Domain Leads -> Workers + independent Auditor); sonnet is allowed only for inherently deterministic actions (e.g., git push), haiku is never used. Gates every complete/passed/verified claim with literal command output as evidence. Fully autonomous - logs assumptions for post-hoc reversal. Distinct from nexus and gvo-router-cc (both Claude Code) and conductor (state persistence).",
       "path": "../gvo-router/SKILL.md",
       "category": "workflow",
       "tags": [
@@ -301,14 +301,39 @@
         "design",
         "review",
         "improve",
-        "make this",
         "set up",
         "scaffold",
-        "help me with",
-        "let's build",
-        "route this",
         "use the router",
         "gvo-router"
+      ],
+      "isActive": true,
+      "source": "local/gvo-skills"
+    },
+    {
+      "id": "gvo-router-cc__imp_local",
+      "name": "gvo-router-cc",
+      "description": "Claude Code port of gvo-router. Same 3-tier opus organization (Director -> Domain Leads -> Workers + independent Auditor on a parallel chain), but runs locally against the on-disk gvo-skills library instead of the claude.ai + from-desktop MCP setup. Sonnet is acceptable only for inherently deterministic actions (e.g., git push); haiku is never used. Every complete/passed/verified claim must include literal command output as evidence. Use this when you specifically want the org-with-Auditor pattern in Claude Code, NOT the standard nexus 7-phase pipeline.",
+      "path": "../gvo-router-cc/SKILL.md",
+      "category": "workflow",
+      "tags": [
+        "router",
+        "orchestrator",
+        "claude-code",
+        "opus",
+        "autonomous",
+        "auditor"
+      ],
+      "triggers": [
+        "gvo-router-cc",
+        "router-cc",
+        "/gvo-router-cc",
+        "use the cc router",
+        "use the local router",
+        "run the router locally",
+        "spawn the org",
+        "with auditor",
+        "3-tier router",
+        "claude code router"
       ],
       "isActive": true,
       "source": "local/gvo-skills"

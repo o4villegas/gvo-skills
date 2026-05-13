@@ -7,7 +7,7 @@ Director (this skill) reads it before spawning any agent.
 
 ```
                  ┌──────────────┐
-                 │   Director   │  ← this skill (you, in claude.ai)
+                 │   Director   │  ← this skill (you, in Claude Code)
                  └──────┬───────┘
                         │
        ┌────────────────┼────────────────┐
@@ -153,12 +153,17 @@ within one Lead-Build pass. If they need to, the Lead serializes them.
 
 ## Spawn Template (Reference Copy)
 
+For Claude Code, prefer specialized `subagent_type` values when they match the role
+(planner / tdd-guide / code-reviewer / security-reviewer / architect / Explore /
+verify-gate); fall back to `general-purpose` otherwise. See SKILL.md §3.1 for the
+full mapping. The template below uses `general-purpose` as the safe default.
+
 ```
 Agent({
   description: "<3-5 word task summary>",
   subagent_type: "general-purpose",
   model: "opus",
-  prompt: `You are <Role> in the gvo-router organization.
+  prompt: `You are <Role> in the gvo-router-cc organization.
 
 Your role: <Lead-Plan | Lead-Build | Lead-Test | Worker-X | Auditor>
 You report to: <Director | Lead-Y>
