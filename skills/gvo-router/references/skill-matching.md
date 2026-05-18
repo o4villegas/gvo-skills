@@ -62,7 +62,10 @@ Also boost `category` matches:
 ### Step 3: Apply Threshold + Cap
 
 - Threshold: 5 — below this, the match is too weak to use
-- Cap: top 3 skills above threshold
+- Cap: **top 5 above threshold** (was top 3). The wider candidate pool feeds Step
+  4.5's content-aware re-rank, which then narrows back to top 3. If Step 4.5 will
+  be skipped (skip condition: any skill scored ≥ 15), the Director can short-circuit
+  back to top 3 at this step.
 - Ties broken by name length (longer name = more specific = preferred)
 
 If zero skills above threshold → no skill match → route through default plan/build/test
@@ -70,8 +73,61 @@ pipeline with stack defaults from §7 of SKILL.md.
 
 ### Step 4: Read Matched Skills' Content
 
-For each matched skill, run `codebase_read_file` on its `path` field. Embed the FULL
-content into the relevant Lead's prompt — do not summarize, do not pass just the path.
+For each of the top 5 (or top 3 in the short-circuit case), run `codebase_read_file`
+on its `path` field. Embed the FULL content into the Step 4.5 input (or directly
+into the relevant Lead's prompt if Step 4.5 is skipped) — do not summarize, do not
+pass just the path.
+
+### Step 4.5: Content-Aware Re-Rank
+
+**When to run:** when no Step 2 score hit ≥ 15. Skip otherwise — the clear winner
+won't change under re-ranking.
+
+**Why:** Step 2 scores against registry metadata only. As of 2026-05-17 the registry
+has 91% empty `tags` arrays and 17% empty `triggers` arrays, so metadata-only
+scoring systematically under-ranks skills with weak metadata even when their
+SKILL.md body is the correct fit. Step 4.5 corrects this by re-ranking on the
+actual skill body.
+
+**Algorithm:**
+
+1. Take the 5 SKILL.md bodies loaded in Step 4. Strip YAML frontmatter from each.
+2. Issue ONE opus call (Agent tool, model: "opus", subagent_type: "general-purpose")
+   with this prompt shape:
+   ```
+   Request: "<user's literal request>"
+
+   For each of these 5 skills, score 0-10 on how well its full instructions match
+   the request. Reply with JSON only, no prose around it:
+     [{"name": "X", "score": N, "why": "<≤80 chars>"}, ...]
+
+   Skills:
+   ## skill-1-name
+   <body, frontmatter stripped>
+
+   ## skill-2-name
+   <body>
+   ...
+   ```
+3. Parse the JSON reply. Top 3 by `score` field become the final matched skills.
+4. Any of the 5 candidates that scored well in Step 2 but dropped in Step 4.5 gets
+   logged to the Director's assumption ledger as:
+   `A0_dropped_match: <name> (Step 2 score: X, Step 4.5 content score: Y, why: <reason>)`
+   The user can override post-hoc with "also use <name>".
+
+**Cost:** 5 parallel reads (already done in Step 4) + 1 opus call. The opus call's
+input size is dominated by the 5 SKILL.md bodies — typically 5K-25K input tokens,
+small JSON output.
+
+**Why ONE batched call, not five per-skill calls:** the per-skill call would be 5×
+cheaper individually but loses cross-skill calibration. The batched call lets the
+scorer see all 5 simultaneously and produce calibrated relative scores. Batch wins.
+
+**Failure handling:** if the opus call returns malformed JSON or non-JSON prose,
+fall back to the Step 2 top 3 and log
+`A0_step_4.5_parse_failed: opus reply was <first 200 chars>` to the ledger. Do not
+retry — that just adds cost without changing the underlying issue. The Step 2
+fallback is acceptable.
 
 ## Worked Examples
 

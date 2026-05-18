@@ -139,6 +139,59 @@ problem. The verify-gate Stop hook on Claude Code Desktop fires on it. The Audit
 this skill is a second line of defense — it independently re-runs commands and refuses
 to PASS a claim without quoted output evidence, regardless of whether the hook fires.
 
+## Consultation Chains (Auditor Requirements)
+
+When a Worker uses the CONSULT primitive (SKILL.md §3.2), the audit trail must
+capture the full chain. The Auditor verifies three things about every consultation:
+
+### Required audit trail entries per consultation
+
+Every CONSULT event surfaces as five entries in the audit trail:
+
+```
+[T+X:XX:XX] Worker-<Y> returned CONSULT
+            Question: <question>
+            Scope hint: <hint>
+[T+X:XX:XX] Spawned Consult-Worker (opus, subagent_type: <chosen>)
+[T+X:XX:XX] Consult-Worker returned answer (confidence <X>%)
+[T+X:XX:XX] Re-spawned Worker-<Y> with consultation reply appended
+[T+X:XX:XX] Worker-<Y> returned <deliverable | BLOCKED | CONSULT-again>
+```
+
+If any of those five entries is missing, the Auditor marks the consultation
+**UNVERIFIED** in the matrix (an incomplete chain — we don't know what happened).
+
+### What the Auditor verifies
+
+1. **The Consult-Worker actually ran.** Look for the "Spawned Consult-Worker"
+   entry. If the original Worker returned CONSULT but no Consult-Worker spawn
+   exists, that's a FAIL row: `consultation-routing-skipped`.
+2. **The answer was used.** The re-spawned Worker's final deliverable must
+   reference, contradict, or otherwise demonstrably engage with the consult answer.
+   Phrases that count as engagement: "the consultation said X, so I…", "the
+   reply was wrong because Y, so I instead…", "applying the suggestion from
+   Consult-Worker…". A deliverable that proceeds as if no consultation happened
+   is a FAIL row: `consultation-ignored`.
+3. **The caps were honored.** Audit the per-Worker count (≤2) and per-Lead-domain
+   count (≤4). A run exceeding the cap with consultations still being routed is
+   FAIL: `consultation-cap-exceeded`.
+
+### Matrix format for consultations
+
+Consultations get their own rows in the verification matrix:
+
+```
+| # | Claim                                | Lead   | Re-run check              | Result            | Verdict |
+|---|--------------------------------------|--------|---------------------------|-------------------|---------|
+| 6 | "Worker-Build-2 consulted Test"      | Build  | grep CONSULT audit-trail  | chain present     | PASS    |
+| 7 | "Consult answer applied"             | Build  | diff consult-A vs deliv   | engaged at line 8 | PASS    |
+| 8 | "Per-Worker consult cap ≤2"          | Build  | count CONSULTs per worker | max=2, within cap | PASS    |
+```
+
+If any of these rows FAIL, the Lead's deliverable does not exit Phase 4 — the same
+fix-cycle protocol applies as for any other FAIL (max 2 fix cycles, then halt and
+surface to user).
+
 ## Confidence % vs Evidence
 
 The user's CLAUDE.md mandates a confidence % on every non-trivial claim, plus a

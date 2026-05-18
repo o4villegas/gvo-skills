@@ -62,6 +62,12 @@ directly — they are cheap and the results gate everything downstream.
    - `<cwd>/conductor/tracks.md`
 
    Missing files are fine — record the literal not-found response.
+4. **Routing memory** (soft prior for §6 scoring): attempt `Read` against
+   `<auto-memory-dir>/routing-decisions.md` where `<auto-memory-dir>` is the auto-memory
+   path for the current cwd (see §11). The file may not exist — that's fine, treat
+   as empty. If it exists, read only the last ~2000 lines (or last 20 `## <date>`
+   entries, whichever shorter). The contents feed the §6 scoring boost described in
+   §11 D1. Missing-file response counts as a successful read for audit purposes.
 
 Record what you read, including byte counts and file paths. The Auditor will check that
 your routing decisions cite these reads with line references.
@@ -143,6 +149,10 @@ Deliverable format:
   inside a fenced code block. No claim may stand alone in prose.
 - Confidence %: state your confidence the deliverable is correct, with one sentence
   explaining what would raise it.
+- (Lead-Plan only) Optional ## Skill requests section listing additional registered
+  skills you discovered would help downstream Leads. One line per skill:
+  - <skill-name>: <one-sentence reason>. Empty section is fine; absent section means
+  no requests. Director processes these in Phase 2.5 — see §6.5.
 
 Hard constraints:
 - model: explicit. Opus by default. Sonnet only for inherently deterministic
@@ -151,6 +161,9 @@ Hard constraints:
 - Never modify production data without an explicit write authorization in your prompt.
 - Never claim "verified" / "complete" / "passed" without command output evidence.
 - If blocked, return BLOCKED with one sentence on why and what you need.
+- If you need cross-domain input mid-task that you cannot produce yourself, return
+  CONSULT (see §3.2) instead of guessing. The Director will route and re-spawn
+  you with the answer. CONSULT is not failure — it is the consultation primitive.
 
 Do NOT pause to ask the user. If a decision is needed, log an assumption to your
 deliverable's Assumption Ledger section with confidence: high|medium|low and continue.
@@ -161,6 +174,71 @@ deliverable's Assumption Ledger section with confidence: high|medium|low and con
 The Director must construct this prompt fresh each time, embedding the specific context.
 Never pass a free-text request directly to a sub-agent — always wrap it in this template.
 
+## 3.2 Consultation Routing (Worker-to-Worker via Director)
+
+A Worker that needs input from a different specialist mid-task returns `CONSULT`
+instead of its normal deliverable. The Director routes the consultation. This preserves
+the depth cap (Workers still cannot spawn sub-agents) while enabling inter-agent
+dialogue.
+
+### CONSULT return contract
+
+```json
+{
+  "return_type": "CONSULT",
+  "question": "<one specific question, ≤200 chars>",
+  "scope_hint": "<what kind of worker would know this — e.g. 'a test specialist familiar with Vitest async patterns'>",
+  "context_excerpt": "<≤500 chars of the worker's current state — file paths, the line that triggered the question, what it has already tried>"
+}
+```
+
+### Director routing protocol
+
+When a Worker returns CONSULT:
+
+1. **Spawn Consult-Worker** (opus, fresh Agent call). Prompt scope: answer the
+   question using `context_excerpt` as background. Preferred `subagent_type` matches
+   the `scope_hint` (e.g., `code-reviewer` if the hint mentions review, `tdd-guide`
+   if testing, `architect` if design); fall back to `general-purpose`. Deliverable:
+   a single self-contained answer plus confidence %. Consult-Worker is not part of
+   any Lead's domain — it reports directly to Director.
+2. **Re-spawn the original Worker** (opus, fresh Agent call) with its original
+   prompt PLUS a new appended section:
+   ```
+   ## Consultation reply (from Consult-Worker, opus)
+   Question you asked: <question>
+   Answer: <consult-worker's deliverable>
+   Confidence: <consult-worker's confidence %>
+   ```
+   The re-spawned Worker resumes from scratch with the new context.
+
+**Cost per consultation: 3 opus calls** (original Worker that issued CONSULT + Consult-Worker + re-spawn of original).
+
+### Caps (non-negotiable)
+
+- **2 consultations per Worker** per run → max 6 opus calls per Worker
+- **4 consultations per Lead's domain** per run → max 12 opus calls per Lead
+- Exceeding either cap converts further CONSULT returns into BLOCKED with reason
+  `consultation cap reached`. The Lead handles the BLOCKED per §8 recovery.
+
+### Audit trail requirement
+
+Every CONSULT event must appear in the audit trail in this format:
+
+```
+[T+X:XX:XX] Worker-<Y> returned CONSULT
+            Question: <question>
+            Scope hint: <hint>
+[T+X:XX:XX] Spawned Consult-Worker (opus, subagent_type: <chosen>)
+[T+X:XX:XX] Consult-Worker returned answer (confidence <X>%)
+[T+X:XX:XX] Re-spawned Worker-<Y> with consultation reply appended
+[T+X:XX:XX] Worker-<Y> returned deliverable
+```
+
+The Auditor sees these events. If the re-spawned Worker's final deliverable does not
+acknowledge the consultation reply (e.g., the answer was ignored and the Worker
+proceeded with its original wrong guess), that is a FAIL row in the Auditor matrix.
+
 ## 4. The Pipeline (Auto Mode)
 
 You operate in auto mode by default — fully autonomous, no user pauses. Mirrors
@@ -168,7 +246,8 @@ You operate in auto mode by default — fully autonomous, no user pauses. Mirror
 
 ### Phase 0: Classify
 
-Match the request against §6 (skill matching). Output a one-line classification:
+Match the request against §6 (skill matching), then run §6.5 (refinement pass) unless
+the skip condition fires. Output a one-line classification:
 
 ```
 Class: <build | enhance | fix | quick | full-stack | research | other>
@@ -233,7 +312,41 @@ embedded in their prompts as context.
 
 **Exit when:** Lead-Plan has returned a deliverable AND the Auditor has produced its
 matrix on plan.md with all rows PASS or with FAIL→fix→PASS resolved. If Auditor
-returns UNVERIFIED on any plan row, do not proceed to Phase 3 — surface to user.
+returns UNVERIFIED on any plan row, do not proceed to Phase 2.5 — surface to user.
+
+### Phase 2.5: Re-Evaluation Gate (Iterative Skill Pull-In)
+
+Before spawning Lead-Build + Lead-Test, the Director re-evaluates the skill set
+against what Lead-Plan actually discovered. This is the iterative pull-in that makes
+the router behave less like "fan-out from initial classification" and more like
+"keep refining as the work reveals itself." Borrows the loop structure from
+`skills/iterative-retrieval/SKILL.md`.
+
+Two inputs trigger re-evaluation:
+
+1. **Explicit Skill requests from Lead-Plan.** If plan.md contains a `## Skill requests`
+   section (per the §3.1 spawn template addition), each named skill becomes a
+   candidate for embedding into Lead-Build / Lead-Test prompts. The Director scores
+   the requested skills against the request + plan.md tokens (run §6 scoring on the
+   expanded token set) and embeds any clearing threshold 5.
+2. **Implicit token drift.** The Director extracts new keywords from plan.md that did
+   not appear in the original request (e.g. plan.md mentions "PDF" but the original
+   request did not). Director re-runs §6 + §6.5 scoring with the expanded token set.
+   Any skill that now clears threshold AND wasn't already matched gets considered for
+   embedding.
+
+After Phase 3 Workers report up to their Leads (but before Phase 4 Auditor gate), the
+same re-evaluation runs once more with each Lead's discoveries as additional input
+to §6 + §6.5 scoring.
+
+**Cap: 2 re-evaluation rounds total per run.** A Lead-requested skill that arrives in
+round 3 triggers an assumption ledger entry instead of another round:
+`A_N: Skill X requested late by Lead-Y but re-eval cap reached. Not added.`
+
+**Exit when:** either (a) no new skills cleared threshold in the most recent round, or
+(b) the 2-round cap is hit, or (c) Lead-Plan's plan.md contained no Skill requests
+section AND no new keywords appeared. In all cases, log to the audit trail what was
+considered, what was embedded, and what was rejected.
 
 ### Phase 3: Workers Execute Under Leads
 
@@ -352,6 +465,60 @@ algorithm. Summary:
 5. Loaded skills' SKILL.md must be read in full before any Lead spawns — Leads receive
    the relevant skill's content as embedded context, not as a path.
 
+## 6.5 Refinement Pass (Content-Aware Re-Rank)
+
+§6 scores against registry metadata only — description, triggers, tags, name. The
+registry has 17% empty triggers and 91% empty tags (verified 2026-05-17), so
+metadata-only scoring under-ranks skills with weak metadata even when their
+SKILL.md body is the right fit. §6.5 fixes this by re-ranking on actual content.
+
+### Skip condition
+
+If any single skill in §6 scoring hit ≥ **15**, skip §6.5 entirely — that's a clear
+winner, and §6.5's content reads + opus scoring call don't change the outcome.
+
+### Algorithm
+
+1. **Initial §6 produces top 5** (not top 3 — widen the candidate pool).
+2. **Read all 5 SKILL.md bodies in parallel** via the `Read` tool against
+   `<repo-root>/skills/nexus/<skill.path>` (resolving registry `path` field against
+   `skills/nexus/`). Strip YAML frontmatter from each.
+3. **One opus scoring call** via the `Agent` tool with this prompt shape:
+   ```
+   Request: "<user's literal request>"
+
+   For each of these 5 skills, score 0-10 on how well its full instructions match
+   the request. Output JSON only: [{"name": "X", "score": N, "why": "<≤80 chars>"}, ...]
+
+   Skills:
+   ## skill-1-name
+   <body of SKILL.md, frontmatter stripped>
+
+   ## skill-2-name
+   <body>
+   ...
+   ```
+4. **Re-rank by content score.** Top 3 by content score (not §6 score) are the
+   matched skills handed to Lead-Plan.
+5. **Log dropped matches.** Any skill that scored well in §6 but dropped in §6.5
+   gets an assumption ledger entry:
+   `A0_dropped_match: <name> (§6 score: X, §6.5 content score: Y, why: <reason>)`.
+   The user can reverse with "also use <name>".
+
+### Cost
+
+- 5 `Read` calls (parallel, cheap — local filesystem)
+- 1 opus Agent invocation (~5K-25K input tokens depending on skill sizes; output is JSON)
+
+Net: §6.5 adds 5 reads + 1 opus call per matching run where the skip condition
+doesn't fire. Acceptable cost for catching shallow-metadata misses.
+
+### What §6.5 does NOT fix
+
+Skills whose registry metadata is so weak they don't make §6's top 5 in the first
+place. That's a registry data-quality problem — fix the empty `tags` / `triggers`
+arrays via a separate sweep (out of scope for this skill).
+
 ## 7. Stack Defaults
 
 If the user does not specify, mirror nexus defaults (per the gvo-skills root CLAUDE.md):
@@ -394,15 +561,108 @@ project, medium if defaulted`).
 
 ```
 1. §1 Environment gate — Claude Code? gvo-skills repo reachable? registry parseable?
-2. §2 Read prereqs — registry, conductor, project state (parallel)
-3. §6 Match skills against the request
+2. §2 Read prereqs — registry, conductor, project state, routing-decisions.md (parallel)
+3. §6 Match skills; §6.5 content-aware re-rank (unless skipped)
 4. §4 Phase 0 — classify; §4 Phase 1 — capture context
 5. §4 Phase 2 — spawn Lead-Plan (opus, subagent_type: planner if available)
-6. §4 Phase 3 — Lead-Plan → plan; spawn Lead-Build + Lead-Test (opus, parallel)
-7. §4 Phase 4 — Auditor (opus, subagent_type: verify-gate if available) gates each Lead
-8. §4 Phase 5 — assemble Result + Verification matrix + Assumption ledger
-9. Deliver to user, plain English outside code blocks
+6. §4 Phase 2.5 — re-evaluation gate (iterative skill pull-in)
+7. §4 Phase 3 — Lead-Plan → plan; spawn Lead-Build + Lead-Test (opus, parallel)
+   Workers may CONSULT mid-task — Director routes per §3.2
+8. §4 Phase 4 — Auditor (opus, subagent_type: verify-gate if available) gates each Lead
+9. §4 Phase 5 — assemble Result + Verification matrix + Assumption ledger
+10. §11 Memory writes — append routing-decisions.md + POST skill-evolution analyses
+11. Deliver to user, plain English outside code blocks
 ```
+
+## 11. Memory Writes (Two Surfaces)
+
+After every run, the Director writes to two memory surfaces. Both are fire-and-forget
+and must not delay the Phase 5 user-facing delivery. They run AFTER the message has
+been composed and sent.
+
+### D1 — Auto-Memory File (Per-Project)
+
+The auto-memory dir for the current cwd is:
+- Slug rule: cwd path → replace `/`, `\`, `:` with `-`, drop double-dashes? — actually
+  use the same slug Claude Code already computes for `~/.claude/projects/<slug>/`. The
+  simplest path: if you can see `~/.claude/projects/<existing-slug>/` for any project,
+  that's the slug rule. For `\\wsl.localhost\ubuntu\home\lando555\gvo-skills` the
+  slug is `--wsl-localhost-ubuntu-home-lando555-gvo-skills`.
+- Memory dir: `C:\Users\Lando\.claude\projects\<slug>\memory\`
+- Target file: `<memory-dir>\routing-decisions.md` (append, create on first write).
+
+**Scope note:** if the router runs while cwd is PurfPulse, decisions land in
+PurfPulse's memory dir, not gvo-skills'. That's intentional — routing memory is
+per-project. A skill that worked for "fix Cloudflare deploy" in PurfPulse may not be
+the right choice for the same phrasing in a Vercel-targeted project.
+
+**Entry shape (append one per run):**
+
+```
+## <ISO date> — <one-line summary of request, ≤80 chars>
+
+- Tokens: [<comma-separated>]
+- Matched (§6): [{name, score}, ...]
+- Matched (§6.5 re-rank): [{name, content-score}, ...]  (only if §6.5 ran)
+- Phase 2.5 additions: [{name, round, reason}, ...]  (only if Phase 2.5 added skills)
+- Consultations: <count> across <Lead-X (N), Lead-Y (M)>
+- Final outcome: PASS | FAIL-resolved | UNVERIFIED | HALTED
+- Auditor matrix: <N PASS, M FAIL, K UNVERIFIED>
+- Top assumptions: A0_X (high), A0_Y (medium), A0_Z (low)
+```
+
+**Read-back protocol (§2 step 4):** before §6 scoring, Director reads the last 20
+entries. Any skill that appeared in a PASS-outcome entry whose request shares ≥ 2
+tokens with the current request gets a **+2 boost** in §6 scoring. Cap the boost at
+**+6** so historical preference does not override strong current matches.
+
+### D2 — skill-evolution Worker (Long-Term Store)
+
+Endpoint:
+
+```
+POST https://skill-evolution.lando555.workers.dev/analyses
+Content-Type: application/json
+```
+
+> **Known issue (2026-05-18):** the `/analyses` endpoint returns HTTP 500
+> ("internal server error") on every POST regardless of body shape. `/health`
+> still returns 200. Root cause is a D1-side bug in the skill-evolution Worker
+> itself (separate project at `/home/lando555/skill-evolution/`). Until that's
+> fixed, D2 POSTs fail every run; D1 (auto-memory file) still works fine. The
+> router's failure handling (below) covers the 500: log
+> `memory_d2_post_failed` and continue. Once the upstream Worker is fixed
+> (check `/health` for `version` > `0.1.0`), D2 starts recording without code
+> changes here.
+
+Body schema:
+
+```json
+{
+  "taskId": "<router-run-uuid>",
+  "taskCompleted": true | false,
+  "skillJudgments": [
+    {
+      "skillId": "<id-field-from-registry>",
+      "skillApplied": true | false,
+      "note": "<one-sentence: matched at §6 score X, §6.5 content score Y, used in Lead-Z>"
+    }
+  ]
+}
+```
+
+`taskCompleted` is `true` only if Phase 4 Auditor returned all-PASS or
+all-PASS-with-UNVERIFIED; otherwise `false`. Every matched skill (§6 only or §6 +
+§6.5) gets a `skillJudgments` row. Skills considered but dropped at §6.5 get
+`skillApplied: false` with the drop reason in `note`.
+
+### Failure handling
+
+If either write fails (filesystem error for D1, timeout / 5xx for D2), log to the
+audit trail as `memory_d1_write_failed: <reason>` or `memory_d2_post_failed: <reason>`
+and continue. The run still succeeds. The next run will write its own entry — drift
+is acceptable because both surfaces are intended as soft priors, not authoritative
+state.
 
 ## References
 

@@ -46,6 +46,13 @@ Director sees raw Auditor output, not a Lead-summarized version.
 - Receives Lead deliverables + Auditor matrix
 - Cross-checks Lead claims against Auditor PASS/FAIL/UNVERIFIED
 - Composes final user-facing delivery
+- **Routes consultations** (Worker CONSULT returns) per SKILL.md §3.2: spawn
+  Consult-Worker, capture answer, re-spawn original Worker with answer appended
+- **Runs Phase 2.5 re-evaluation gate** after Lead-Plan: process any Skill requests
+  in plan.md, extract new keywords, re-score §6 + §6.5, embed any newly-matched
+  skills into Lead-Build / Lead-Test prompts
+- **Writes memory** after Phase 5 per SKILL.md §11: append to routing-decisions.md
+  in the auto-memory dir AND fire-and-forget POST to skill-evolution Worker
 - **Does not write code, plan features, run tests, or read files beyond the §2
   prerequisites**. The Director routes; Leads execute.
 
@@ -65,6 +72,12 @@ Director sees raw Auditor output, not a Lead-summarized version.
   - Top 3 risks + mitigations
   - Confidence % + what would raise it
   - Evidence: every architectural claim cites a read of an existing file/skill
+  - **Skill requests (optional, NEW per Phase 2.5)**: a `## Skill requests` section
+    listing additional registered skills Lead-Plan discovered would help downstream
+    Leads. One line per skill: `- <skill-name>: <one-sentence reason>`. Director
+    processes these in Phase 2.5. Absent or empty section = no requests. Examples:
+    - `pdf: PDF rasterization needed for receipt OCR (not in original request)`
+    - `runpod: GPU inference path — turns out the model is too large for CF Workers`
 
 ### Lead-Build
 
@@ -106,8 +119,17 @@ Director sees raw Auditor output, not a Lead-summarized version.
 
 - Receive: one specific task within the Lead's domain
 - Have file ownership boundaries — never write files outside their assigned scope
-- Return: deliverable + evidence section (commands run + output) + confidence %
-- May not spawn sub-agents (depth cap at Workers — no further nesting)
+- Return one of:
+  - **deliverable** + evidence section (commands run + output) + confidence %
+  - **BLOCKED** with one sentence on why and what's needed
+  - **CONSULT** (NEW, see SKILL.md §3.2): when cross-domain input is required
+    mid-task and the Worker cannot produce it itself. Director routes to a fresh
+    Consult-Worker and re-spawns the original with the answer appended. Cost: 3
+    opus calls per consultation. Caps: 2 consultations per Worker, 4 per Lead's
+    domain. Exceeding the cap converts the next CONSULT into BLOCKED.
+- May not spawn sub-agents (depth cap at Workers — no further nesting). The
+  consultation primitive (CONSULT return type) is the sanctioned alternative to
+  sub-agent spawning: the Director, not the Worker, dispatches the Consult-Worker.
 
 ## Tier-2 vs Tier-3 Decision Rules
 
