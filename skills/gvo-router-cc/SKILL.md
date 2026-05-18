@@ -583,11 +583,13 @@ been composed and sent.
 ### D1 — Auto-Memory File (Per-Project)
 
 The auto-memory dir for the current cwd is:
-- Slug rule: cwd path → replace `/`, `\`, `:` with `-`, drop double-dashes? — actually
-  use the same slug Claude Code already computes for `~/.claude/projects/<slug>/`. The
-  simplest path: if you can see `~/.claude/projects/<existing-slug>/` for any project,
-  that's the slug rule. For `\\wsl.localhost\ubuntu\home\lando555\gvo-skills` the
-  slug is `--wsl-localhost-ubuntu-home-lando555-gvo-skills`.
+- Slug rule: replace each of `/`, `\`, `:`, `.` in the cwd path with `-`. Do NOT
+  collapse consecutive dashes — `\\` becomes `--`, two dots become `--`. Examples:
+  - `\\wsl.localhost\ubuntu\home\lando555\gvo-skills`
+    → `--wsl-localhost-ubuntu-home-lando555-gvo-skills`
+  - `C:\Users\Lando\purfpulse` → `C--Users-Lando-purfpulse`
+  - To cross-check, list `~/.claude/projects/` — the dir name for the current cwd
+    is the canonical slug.
 - Memory dir: `C:\Users\Lando\.claude\projects\<slug>\memory\`
 - Target file: `<memory-dir>\routing-decisions.md` (append, create on first write).
 
