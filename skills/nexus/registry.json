@@ -9,7 +9,13 @@
       "path": "skills/agentic-engineering/SKILL.md",
       "category": "planning",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "agentic engineering",
+        "eval first",
+        "decompose task",
+        "model routing",
+        "agentic workflow"
+      ],
       "isActive": true,
       "source": "everything-claude-code"
     },
@@ -46,7 +52,7 @@
     {
       "id": "claude-code-kit__imp_local",
       "name": "claude-code-kit",
-      "description": "Boris Cherny's Claude Code best-practices kit \u2014 6 slash commands (verify, commit-push-pr, fix-errors, pr-feedback, new-feature, review), 4 subagents (build-validator, code-architect, code-simplifier, verify-app), and project templates (CLAUDE.md, settings.json, hooks.json). Use when bootstrapping a new project or need lightweight per-project slash commands.",
+      "description": "Boris Cherny's Claude Code best-practices kit — 6 slash commands (verify, commit-push-pr, fix-errors, pr-feedback, new-feature, review), 4 subagents (build-validator, code-architect, code-simplifier, verify-app), and project templates (CLAUDE.md, settings.json, hooks.json). Use when bootstrapping a new project or need lightweight per-project slash commands.",
       "path": "../claude-code-kit/SKILL.md",
       "category": "implementation",
       "tags": [
@@ -74,7 +80,13 @@
       "path": "skills/codebase-onboarding/SKILL.md",
       "category": "discovery",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "codebase onboarding",
+        "onboard codebase",
+        "explore new codebase",
+        "understand codebase",
+        "new repo"
+      ],
       "isActive": true,
       "source": "alirezarezvani/claude-skills"
     },
@@ -85,7 +97,16 @@
       "path": "skills/consult/SKILL.md",
       "category": "implementation",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "consult gemini",
+        "ask codex",
+        "second opinion",
+        "cross-check",
+        "consult another AI",
+        "ask opencode",
+        "copilot opinion",
+        "consult AI"
+      ],
       "isActive": true,
       "source": "agentsys"
     },
@@ -96,7 +117,13 @@
       "path": "skills/continuous-agent-loop/SKILL.md",
       "category": "implementation",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "continuous loop",
+        "agent loop",
+        "autonomous loop",
+        "long-running agent",
+        "continuous agent"
+      ],
       "isActive": true,
       "source": "everything-claude-code"
     },
@@ -107,7 +134,15 @@
       "path": "skills/council/SKILL.md",
       "category": "planning",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "council",
+        "convene council",
+        "tradeoffs",
+        "go no-go",
+        "ambiguous decision",
+        "structured disagreement",
+        "four voice"
+      ],
       "isActive": true,
       "source": "everything-claude-code"
     },
@@ -118,7 +153,14 @@
       "path": "skills/debate/SKILL.md",
       "category": "planning",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "debate",
+        "debate topic",
+        "argue about",
+        "stress test idea",
+        "devil advocate",
+        "ai debate"
+      ],
       "isActive": true,
       "source": "agentsys"
     },
@@ -129,7 +171,15 @@
       "path": "skills/deslop/SKILL.md",
       "category": "implementation",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "deslop",
+        "clean slop",
+        "remove debug statements",
+        "repo hygiene",
+        "ghost code",
+        "cleanup code",
+        "clean ai slop"
+      ],
       "isActive": true,
       "source": "agentsys"
     },
@@ -238,7 +288,7 @@
     {
       "id": "from-prompter__imp_136fd7f9",
       "name": "from-prompter",
-      "description": "Autonomous Claude Code prompt engineer and optimizer. Crafts battle-ready agent prompts from user context, then iteratively improves them using a Karpathy-style autoresearch loop \u2014 one change per round, scored against a checklist, until the prompt hits 90%+ consistently.",
+      "description": "Autonomous Claude Code prompt engineer and optimizer. Crafts battle-ready agent prompts from user context, then iteratively improves them using a Karpathy-style autoresearch loop — one change per round, scored against a checklist, until the prompt hits 90%+ consistently.",
       "path": "skills/from-prompter/SKILL.md",
       "category": "domain",
       "tags": [
@@ -274,7 +324,14 @@
       "path": "skills/grow-sustainably/SKILL.md",
       "category": "business",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "grow sustainably",
+        "sustainable growth",
+        "hiring decision",
+        "fundraising decision",
+        "scale business",
+        "spending decision"
+      ],
       "isActive": true,
       "source": "slavingia/skills"
     },
@@ -341,7 +398,7 @@
     {
       "id": "karpathy-coder__imp_28f99488",
       "name": "karpathy-coder",
-      "description": "Use when writing, reviewing, or committing code to enforce Karpathy's 4 coding principles \u2014 surface assumptions before coding, keep it simple, make surgical changes, define verifiable goals. Triggers ",
+      "description": "Use when writing, reviewing, or committing code to enforce Karpathy's 4 coding principles — surface assumptions before coding, keep it simple, make surgical changes, define verifiable goals. Triggers ",
       "path": "skills/karpathy-coder/SKILL.md",
       "category": "planning",
       "tags": [],
@@ -374,7 +431,7 @@
     {
       "id": "mvp__imp_80f511d4",
       "name": "mvp",
-      "description": "Guide building a minimum viable product the minimalist entrepreneur way \u2014 manual first, then processized, then productized. Use when someone is ready to build their first product or struggling with sc",
+      "description": "Guide building a minimum viable product the minimalist entrepreneur way — manual first, then processized, then productized. Use when someone is ready to build their first product or struggling with sc",
       "path": "skills/mvp/SKILL.md",
       "category": "business",
       "tags": [],
@@ -409,7 +466,14 @@
       "path": "skills/pricing/SKILL.md",
       "category": "business",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "pricing",
+        "set price",
+        "price change",
+        "what to charge",
+        "price product",
+        "raise prices"
+      ],
       "isActive": true,
       "source": "slavingia/skills"
     },
@@ -439,7 +503,17 @@
       "path": "skills/saas-metrics-coach/SKILL.md",
       "category": "business",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "saas metrics",
+        "ARR",
+        "MRR",
+        "churn",
+        "LTV",
+        "CAC",
+        "NRR",
+        "saas health",
+        "how is my saas"
+      ],
       "isActive": true,
       "source": "alirezarezvani/claude-skills"
     },
@@ -519,7 +593,13 @@
       "path": "skills/verification-loop/SKILL.md",
       "category": "implementation",
       "tags": [],
-      "triggers": [],
+      "triggers": [
+        "verification loop",
+        "verify",
+        "verification system",
+        "verify work",
+        "comprehensive verification"
+      ],
       "isActive": true,
       "source": "everything-claude-code"
     },
@@ -708,7 +788,7 @@
     {
       "id": "full-stack-orchestration__imp_095a5a81",
       "name": "full-stack-orchestration",
-      "description": "9-step full-stack feature orchestrator: requirements \u2192 API \u2192 DB \u2192 backend \u2192 frontend \u2192 tests \u2192 security \u2192 perf \u2192 deploy.",
+      "description": "9-step full-stack feature orchestrator: requirements → API → DB → backend → frontend → tests → security → perf → deploy.",
       "path": "../full-stack-orchestration/SKILL.md",
       "category": "implementation",
       "tags": [],
@@ -1010,7 +1090,7 @@
     {
       "id": "check-model__imp_ee9920dd",
       "name": "check-model",
-      "description": "Debug and audit financial models for errors \u2014 circular references, broken formulas, hardcoded overrides, balance sheet imbalances, cash flow mismatches, and logic gaps. Use when a model isn't tying, producing unexpected results, or before sending to a client or IC. Triggers on \"d...",
+      "description": "Debug and audit financial models for errors — circular references, broken formulas, hardcoded overrides, balance sheet imbalances, cash flow mismatches, and logic gaps. Use when a model isn't tying, producing unexpected results, or before sending to a client or IC. Triggers on \"d...",
       "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/check-model/SKILL.md",
       "category": "finance",
       "tags": [],
@@ -1025,7 +1105,7 @@
     {
       "id": "model-update__imp_ad1e0c13",
       "name": "model-update",
-      "description": "Update financial models with new data \u2014 quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags material changes. Use after earnings, guidance updates, or when assumptions need refreshing. Triggers on \"u...",
+      "description": "Update financial models with new data — quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags material changes. Use after earnings, guidance updates, or when assumptions need refreshing. Triggers on \"u...",
       "path": "../awesome-claude-corporate-skills-main/02-finance-accounting/model-update/SKILL.md",
       "category": "finance",
       "tags": [],
