@@ -583,13 +583,19 @@ been composed and sent.
 ### D1 — Auto-Memory File (Per-Project)
 
 The auto-memory dir for the current cwd is:
-- Slug rule: replace each of `/`, `\`, `:`, `.` in the cwd path with `-`. Do NOT
-  collapse consecutive dashes — `\\` becomes `--`, two dots become `--`. Examples:
+- Slug rule: replace every non-alphanumeric, non-dash character in the cwd path
+  with `-` (this includes `/`, `\`, `:`, `.`, `$`, and other punctuation). Do NOT
+  collapse consecutive dashes — `\\` becomes `--`, `wsl$\` becomes `wsl--`. Case
+  is preserved. Examples (each verified against an actual dir under
+  `~/.claude/projects/`):
   - `\\wsl.localhost\ubuntu\home\lando555\gvo-skills`
     → `--wsl-localhost-ubuntu-home-lando555-gvo-skills`
+  - `\\wsl$\Ubuntu\home\lando555\DocuDamage`
+    → `--wsl--Ubuntu-home-lando555-DocuDamage`
   - `C:\Users\Lando\purfpulse` → `C--Users-Lando-purfpulse`
   - To cross-check, list `~/.claude/projects/` — the dir name for the current cwd
-    is the canonical slug.
+    is the canonical slug. If a candidate slug isn't there, the session hasn't
+    started in that cwd yet; the dir will be auto-created on first write.
 - Memory dir: `C:\Users\Lando\.claude\projects\<slug>\memory\`
 - Target file: `<memory-dir>\routing-decisions.md` (append, create on first write).
 
