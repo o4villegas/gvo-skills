@@ -39,6 +39,22 @@ except ImportError:
 DESC_HARD_LIMIT = 1024
 DESC_WARN_FLOOR = 900  # warning zone: 900..1023
 
+# Recognized directory-suffix disambiguators. When a skill has the same logical
+# name in multiple platforms (e.g. `call-prep` for both Common Room and Apollo),
+# the upstream bundle distinguishes them via dir-name suffixes while keeping the
+# `name:` field as the logical name. Allow `name + suffix == dir` for these.
+DIR_NAME_DISAMBIGUATORS: tuple[str, ...] = (
+    "-common-room",
+    "-apollo",
+)
+
+# Explicit (name, dir) pairs that are intentional and predate stricter validation.
+# Documented in gvo-skills/CLAUDE.md "Known-broken vendored files" section and in
+# the project's `\\wsl.localhost\ubuntu\home\lando555\.claude\CLAUDE.md`.
+HISTORICAL_NAME_DIR_MISMATCHES: frozenset[tuple[str, str]] = frozenset({
+    ("everything-claude-code-conventions", "everything-claude-code"),
+})
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ROOT_REGISTRY = REPO_ROOT / "registry.json"
 NEXUS_REGISTRY = REPO_ROOT / "skills" / "nexus" / "registry.json"
@@ -61,6 +77,25 @@ class Finding:
             "message": self.message,
             "context": self.context,
         }
+
+
+def _name_dir_match(name: str, dir_name: str) -> bool:
+    """Return True if `name` is a valid identifier for the skill in `dir_name`.
+
+    Three cases qualify:
+      1. Exact match (the default).
+      2. Disambiguator suffix: name + suffix == dir, where suffix is a recognized
+         platform disambiguator (e.g. `call-prep` in `call-prep-common-room`).
+      3. Documented historical mismatch in HISTORICAL_NAME_DIR_MISMATCHES.
+    """
+    if name == dir_name:
+        return True
+    for suffix in DIR_NAME_DISAMBIGUATORS:
+        if dir_name == f"{name}{suffix}":
+            return True
+    if (name, dir_name) in HISTORICAL_NAME_DIR_MISMATCHES:
+        return True
+    return False
 
 
 def parse_frontmatter(content: str) -> tuple[dict | None, str | None]:
@@ -98,7 +133,7 @@ def check_skill_file(skill_md: Path) -> list[Finding]:
             "FAIL", "MISSING_NAME", str(skill_md),
             "frontmatter missing 'name' field",
         ))
-    elif name != dir_name:
+    elif not _name_dir_match(name, dir_name):
         findings.append(Finding(
             "FAIL", "NAME_DIR_MISMATCH", str(skill_md),
             f"name '{name}' does not match directory '{dir_name}'",

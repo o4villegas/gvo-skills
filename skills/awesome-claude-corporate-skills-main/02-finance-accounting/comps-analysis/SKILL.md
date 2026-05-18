@@ -1,5 +1,5 @@
 ---
-name: fsi-comps-analysis
+name: comps-analysis
 description: |
   Build institutional-grade comparable company analyses with operating metrics, valuation multiples, and statistical benchmarking in Excel/spreadsheet format.
 
@@ -18,7 +18,6 @@ description: |
   - Pre-revenue startups
   - Companies with unique business models
 ---
-
 # Comparable Company Analysis
 
 ## ⚠️ CRITICAL: Data Source Priority (READ FIRST)

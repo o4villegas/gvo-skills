@@ -152,17 +152,18 @@ The script writes to `skills/nexus/registry.json` (the only registry). `PLUGIN_S
 
 Currently 21 of the 166 bundle skills are registered (commit `6b2d3ef`).
 
-### Known-broken vendored files (do not try to fix)
+### Vendored bundle patches (applied 2026-05-18 — see PATCHES.md)
 
-`validate.py` reports ~38 FAIL rows inside `skills/awesome-claude-corporate-skills-main/` that are upstream artifacts, not local bugs:
+The bundle originally shipped with 37 frontmatter bugs (28 BAD_FRONTMATTER, 1 MISSING_DESCRIPTION, 8 NAME_DIR_MISMATCH). Rather than leave them as permanent validator noise, they've been patched locally and the manifest of changes is documented in [`skills/awesome-claude-corporate-skills-main/PATCHES.md`](skills/awesome-claude-corporate-skills-main/PATCHES.md). That file also contains a pre-filled issue body for upstream PR submission to [hesreallyhim/awesome-claude-corporate-skills](https://github.com/hesreallyhim/awesome-claude-corporate-skills).
 
-- **~26 files lack YAML frontmatter entirely** — mostly under `02-finance-accounting/` (e.g. `model-update`, `deal-tracker`, `teaser`, `unit-economics`, `dd-checklist`, etc.). These render as `BAD_FRONTMATTER`. They will not register on claude.ai cloud as skills; they may still be useful as reference documents.
-- **~8 files have `name` mismatching the directory** (e.g. `call-prep-common-room/` has `name: call-prep`; `resume-generator/` has `name: tailored-resume-generator`). Render as `NAME_DIR_MISMATCH`.
-- **1 file missing `description`** (`02-finance-accounting/check-model/`).
+**If the bundle is re-vendored from upstream**, the patches will be overwritten — re-run the equivalent fix logic from PATCHES.md, OR (preferred) submit the upstream PR so the fixes come back via the next refresh.
 
-These are someone else's repository to fix. If you care enough, file an upstream issue at [hesreallyhim/awesome-claude-corporate-skills](https://github.com/hesreallyhim/awesome-claude-corporate-skills). Do not edit them locally — `git mv` or rewrite would be clobbered on the next vendor refresh.
+**Documented intentional mismatches (allowlisted in `scripts/validate.py`):**
 
-`skills/everything-claude-code/SKILL.md` also reports `NAME_DIR_MISMATCH` (`name: everything-claude-code-conventions` vs dir `everything-claude-code`) — this is an intentional historical name from when the skill was migrated. Leave it.
+- `skills/everything-claude-code/SKILL.md` — `name: everything-claude-code-conventions` (historical migration name). Allowlisted via the `HISTORICAL_NAME_DIR_MISMATCHES` set in validate.py.
+- 4 disambiguator cases in `05-sales/` (`call-prep-common-room`, `prospect-common-room`, `account-research-common-room`, `prospect-apollo`) — the dir suffix distinguishes platform variants of the same logical skill. validate.py accepts `name + suffix == dir` via the `DIR_NAME_DISAMBIGUATORS` tuple.
+
+After these patches and allowlists, `python3 scripts/validate.py` returns **0 FAIL** on a clean tree. Warnings (`DESC_NEAR_LIMIT`) remain but are advisory only — none over the 1024-char hard cap.
 
 ## The mcp-server Worker
 
