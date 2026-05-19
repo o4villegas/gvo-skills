@@ -280,8 +280,21 @@ Step B: Wait for Lead-Plan to return plan.md
 Step C: Spawn Auditor on plan.md (one message, one Agent call)
 Step D: Wait for Auditor matrix; if any FAIL, return to Lead-Plan with the failing
         row and re-spawn (max 2 fix cycles); if any UNVERIFIED, halt and surface to user
-Step E: Once plan.md is PASS, spawn Lead-Build AND Lead-Test in parallel
-        (one message, two Agent calls — they're independent now that the plan is approved)
+Step D.5: APPROVAL GATE (coding classes only). If `Class ∈ {build, enhance, fix,
+          full-stack}`, surface plan.md to the user with: "Here is the proposed
+          plan — approve to proceed to build, reject with specific changes to
+          re-spawn Lead-Plan, or invoke the trivial-task escape hatch (<5 line
+          change, single file, no behavior risk, unambiguous intent) to skip
+          approval." Wait for the user's reply in-conversation. Plan rejection
+          → re-spawn Lead-Plan with the user's feedback (do NOT restart the
+          pipeline from §6 classification). Quick / research / other classes
+          skip this step. See §5 rule 4 and §12 pillar 12.
+Step E: Once plan.md is PASS AND (user approved at Step D.5 OR class is
+        non-coding OR the trivial-task escape hatch fired), spawn Lead-Build AND
+        Lead-Test in parallel (one message, two Agent calls — they're
+        independent now that the plan is approved). For coding classes, append
+        the §12 Dev Pillars verbatim to each Lead's prompt per §12's Pillar
+        Embedding Mechanic.
 ```
 
 | Lead | Returns | Audited by | Feeds |
@@ -411,13 +424,18 @@ follow-up or a "reverse A_N" instruction.
 3. **Auditor independence**. The Auditor must spawn with read-only access to Lead
    transcripts and re-run verification commands itself. Never paraphrase a Lead's
    evidence as Auditor evidence — that's collusion.
-4. **No mid-run pauses except UNVERIFIED**. Absolute rule. If a decision is needed at
-   ANY phase — including Phase 0 classification ambiguity, ambiguous file paths, missing
-   project context, or unclear scope — interpret from available evidence, log to the
-   assumption ledger with a confidence level, and continue. The user can reverse any
-   ledger entry post-hoc with "reverse A_N". The ONLY legitimate mid-run pause is when
-   the Auditor reports UNVERIFIED in Phase 4 — that's a real unknown the org structure
-   itself cannot resolve.
+4. **Two legitimate mid-run pauses: Coding-Class Approval Gate and Auditor
+   UNVERIFIED**. For coding classes (`build / enhance / fix / full-stack`),
+   surface plan.md to the user for explicit approval before Phase 3 (Lead-Build /
+   Lead-Test) spawn — see §4 Phase 2 Step D.5 and §12 pillar 12. The trivial-task
+   escape hatch may skip this pause (<5 line change, single file, no behavior
+   risk, unambiguous intent). For non-coding classes (`quick / research /
+   other`), continue under the autonomous contract: interpret from available
+   evidence — including Phase 0 classification ambiguity, ambiguous file paths,
+   missing project context, or unclear scope — log to the assumption ledger
+   with a confidence level, and proceed. The Auditor's UNVERIFIED rows in Phase 4
+   are the second pause trigger and apply to every class. The user can reverse
+   any ledger entry post-hoc with "reverse A_N".
 5. **3 consecutive low-confidence assumptions = halt**. If the ledger shows 3 in a row at
    `confidence: low`, stop the whole pipeline, return what you have, and surface the
    ledger to the user. Compounding low-confidence calls is how silent failures happen.
@@ -438,12 +456,26 @@ Summary:
 2. Score each skill in `registry.json` by: (a) trigger phrase overlap (3 pts each),
    (b) description keyword overlap (1 pt each), (c) tag match (2 pts each), (d) name
    substring match (5 pts).
-3. Top 3 skills above threshold 5 = matched. Below threshold = treat as `Class: other`
-   and route through default plan/build/test pipeline.
+3. **Top 2 skills above threshold 5 = the final list handed to Leads.** §6.5 widens
+   internally to top 5 as candidates for content re-rank, then narrows back to top 2.
+   Below threshold = treat as `Class: other` and route through default
+   plan/build/test pipeline.
 4. If multiple skills tie or near-tie, prefer the one with the more specific name (longer
    substring match against the request).
-5. Loaded skills' SKILL.md must be read in full before any Lead spawns — Leads receive
-   the relevant skill's content as embedded context, not as a path.
+5. Loaded skills' SKILL.md must be read in full, then **trimmed before embedding** in
+   Lead/Worker prompts. Strip these sections from the body before embedding:
+   - `## What This Skill Is NOT` and any "Not for..." lists
+   - `## Anti-Patterns` and `## What X Doesn't Do` sections
+   - `## Worked Examples` / `## Examples` blocks (illustrative only, not load-bearing)
+   - Large reference tables that duplicate information available in adjacent prose
+   - Footnotes, version history, FAQ sections
+
+   Keep: instructional sections (how to act), spawn templates, hard rules /
+   constraints, error-mode tables, decision matrices, pillar lists. Leads receive
+   the trimmed content as embedded context, never as a path. Trimming typically cuts
+   skill content by 40–60% with no loss of actionable guidance — see
+   [references/skill-matching.md](references/skill-matching.md) "Loading Skills'
+   Content" for the full strip + keep recipe.
 
 ## 6.5 Refinement Pass (Content-Aware Re-Rank)
 
@@ -454,12 +486,21 @@ SKILL.md body is the right fit. §6.5 fixes this by re-ranking on actual content
 
 ### Skip condition
 
-If any single skill in §6 scoring hit ≥ **15**, skip §6.5 entirely — that's a clear
-winner, and §6.5's content reads + opus scoring call don't change the outcome.
+Skip §6.5 entirely when EITHER of these holds — both indicate an unambiguous winner
+that content re-ranking won't change:
+
+1. **Any single skill scored ≥ 15** in §6.
+2. **Top §6 score is ≥ 2× the second-place §6 score** (e.g., top=12, second=5 → skip;
+   top=8, second=6 → run §6.5). A cluster of similar scores means §6.5 may surface a
+   better match; a large gap means the leader is already clear.
+
+Saves ~25K input tokens per run whenever either condition fires (5 SKILL.md body
+reads + 1 opus scoring call avoided).
 
 ### Algorithm
 
-1. **Initial §6 produces top 5** (not top 3 — widen the candidate pool).
+1. **Initial §6 produces top 5** as candidates (wider than the final top-2 cap, to
+   give §6.5's content re-rank a real pool to work with).
 2. **Read all 5 SKILL.md bodies in parallel** via `<prefix>__codebase_read_file`.
    Strip YAML frontmatter from each.
 3. **One opus scoring call** with this prompt shape:
@@ -477,7 +518,7 @@ winner, and §6.5's content reads + opus scoring call don't change the outcome.
    <body>
    ...
    ```
-4. **Re-rank by content score.** Top 3 by content score (not §6 score) are the
+4. **Re-rank by content score.** Top 2 by content score (not §6 score) are the
    matched skills handed to Lead-Plan.
 5. **Log dropped matches.** Any skill that scored well in §6 but dropped in §6.5
    gets an assumption ledger entry:
@@ -537,18 +578,24 @@ project, medium if defaulted`).
 ## 10. Quick Reference Card
 
 ```
-1. §1 Environment gate — claude.ai? from-desktop? registry?
-2. §2 Read prereqs — registry, conductor, project state (parallel)
-3. §6 Match skills against the request; §6.5 content-aware re-rank (unless skipped)
-4. §4 Phase 0 — classify; §4 Phase 1 — capture context
-5. §4 Phase 2 — spawn Lead-Plan (opus)
-6. §4 Phase 2.5 — re-evaluation gate (iterative skill pull-in)
-7. §4 Phase 3 — Lead-Plan → plan; spawn Lead-Build + Lead-Test (opus, parallel)
-   Workers may CONSULT mid-task — Director routes per §3.2
-8. §4 Phase 4 — Auditor (opus, independent) gates each Lead's "complete"
-9. §4 Phase 5 — assemble Result + Verification matrix + Assumption ledger
-10. §11 Memory writes — POST skill-evolution analyses
-11. Deliver to user, plain English outside code blocks
+1.  §1 Environment gate — claude.ai? from-desktop? registry?
+2.  §2 Read prereqs — registry, conductor, project state (parallel)
+3.  §6 Match skills against the request; §6.5 content-aware re-rank (unless skipped)
+4.  §4 Phase 0 — classify; if `Class ∈ {build/enhance/fix/full-stack}`, §12 pillars apply
+5.  §4 Phase 1 — capture context
+6.  §4 Phase 2 Step A–D — spawn Lead-Plan (opus); for coding classes, embed §12
+    Dev Pillars in Lead-Plan's prompt
+7.  §4 Phase 2.5 — re-evaluation gate (iterative skill pull-in)
+8.  §4 Phase 2 Step D.5 — APPROVAL GATE for coding classes (skip for
+    quick/research/trivial)
+9.  §4 Phase 2 Step E + Phase 3 — spawn Lead-Build + Lead-Test (opus, parallel);
+    for coding classes, embed §12 Dev Pillars in their prompts too;
+    Workers may CONSULT mid-task — Director routes per §3.2
+10. §4 Phase 4 — Auditor (opus, independent) gates each Lead's "complete"; for
+    coding classes, Auditor enforces §12 pillar compliance — violations = FAIL rows
+11. §4 Phase 5 — assemble Result + Verification matrix + Assumption ledger
+12. §11 Memory writes — POST skill-evolution analyses
+13. Deliver to user, plain English outside code blocks
 ```
 
 ## 11. Memory Writes (Fire-and-Forget)
@@ -613,6 +660,107 @@ fire-and-forget.
 This is gvo-router (cloud). It does NOT write to local files because claude.ai cloud
 sessions cannot. The Claude Code counterpart `gvo-router-cc` additionally writes a
 local `routing-decisions.md` per project; see its §11 for that surface.
+
+## 12. Dev Pillars (Apply to All Coding Work)
+
+When the request is coding work — `Class ∈ {build, enhance, fix, full-stack}` — the
+Director MUST embed all 12 pillars below verbatim into every Lead spawn prompt as a
+`## Dev Pillars (apply throughout)` section appended after the existing "Hard
+constraints" block from §3.1. Leads then propagate the same pillar text into their
+own Worker spawn prompts. Workers cite pillars by number in their evidence section
+when they make a relevant choice (e.g., "pillar 5 — kept function under 50 lines by
+extracting `parseToken`").
+
+Non-coding classes (`quick / research / other`) do NOT trigger pillar embedding —
+the pillars target code-touching work specifically.
+
+### The 12 Pillars
+
+1. **Empirical verification, evidence-or-no-claim** — Every claim of
+   "verified / complete / passed / tests pass / deploy succeeded" must be backed by
+   a fenced code block with the literal command + its output. See
+   [references/empirical-verification.md](references/empirical-verification.md).
+
+2. **Plain English outside code blocks** — Technical terms (commit hashes, version
+   strings, tool names, file paths in prose) appear only inside fenced code blocks
+   or table cells. Surrounding prose translates to plain English per the user's
+   CLAUDE.md mapping table.
+
+3. **Opus default, Sonnet exception for inherently deterministic mechanical
+   actions** — Code-touching agents use Opus. Sonnet acceptable only for
+   fully-specified shell commands where the agent makes zero decisions (e.g.,
+   `git push origin main`, `wrangler tail`, `npm run typecheck`). If the agent
+   must *decide* anything — which command, which file, whether output is correct —
+   use Opus. Never haiku, in any role. Scoped to this skill only — the global
+   CLAUDE.md / rules/common/performance.md all-Opus lockdown stays in force
+   outside gvo-router and gvo-router-cc.
+
+4. **Multi-agent reporting contract** — Every Worker deliverable: Claim (one
+   sentence) + Evidence (`file:line`, command + output, test artifact, or
+   `[UNVERIFIED]` with reason) + Confidence % (grounded in something specific) +
+   Gap-closer (one sentence on what would raise confidence).
+
+5. **Coding style — KISS, DRY, YAGNI, immutability** — Simplest solution that
+   works; extract repeated logic only when repetition is real; don't build for
+   hypothetical futures; create new objects, never mutate existing ones. Hard
+   limits: files <800 lines, functions <50 lines, nesting <4 levels deep. Early
+   returns over nested conditionals. Named constants over magic numbers.
+
+6. **Explicit error handling at every level** — Handle errors comprehensively;
+   user-friendly messages in UI-facing code; detailed context server-side; never
+   silently swallow errors. Validate at every system boundary (user input,
+   external API responses, file content).
+
+7. **No hardcoded secrets** — API keys, passwords, tokens via env vars or secret
+   manager only. Validate required secrets present at startup. Trigger
+   security-review when touching auth, payments, user input, file system
+   operations, external API calls, or crypto.
+
+8. **Search-first / no duplication** — Before writing new code: `gh search repos`,
+   `gh search code`, Context7 docs, package registries (npm / PyPI / crates.io).
+   Prefer adopting or porting a proven approach over hand-rolled alternatives.
+   Exa only when GitHub + primary docs are insufficient.
+
+9. **70% test coverage minimum** — Unit + integration + E2E tests required for
+   new functionality. TDD: write tests first (RED), implement minimal to pass
+   (GREEN), refactor (IMPROVE). Per the user's CLAUDE.md override of the 80%
+   common default.
+
+10. **Local-first development** — `npm run dev` + `npm test` locally before any
+    push. Deploy via `git push origin main` (Cloudflare Workers Builds runs the
+    pipeline), not `wrangler deploy`. Use the remote production database for
+    local dev — never scaffold a second DB unless the project's CLAUDE.md
+    explicitly says so.
+
+11. **Anti-template design (frontend work only)** — Reject generic Tailwind /
+    shadcn defaults. Required qualities: clear hierarchy through scale contrast,
+    intentional spacing rhythm (not uniform padding), depth or layering, designed
+    hover / focus / active states, semantic HTML over div stacks. See
+    `rules/web/design-quality.md` for the full anti-template checklist.
+
+12. **Approval gate for non-trivial coding work** — User must approve plan.md
+    before Phase 3 spawn (Lead-Build / Lead-Test). Trivial escape hatch: change
+    is <5 lines, isolated to one file, no behavior risk, unambiguous intent →
+    skip approval and proceed. See §4 Phase 2 Step D.5 and §5 rule 4. This is
+    the second legitimate user-pause in auto mode alongside Auditor UNVERIFIED.
+    In claude.ai cloud the pause is conversational: the Director surfaces
+    plan.md inline and waits for the user's reply ("approve" / specific
+    changes / "trivial escape hatch").
+
+### Pillar Embedding Mechanic
+
+When `Class ∈ {build, enhance, fix, full-stack}`:
+
+1. Director copies §12.1–12 verbatim into a `## Dev Pillars (apply throughout)`
+   section appended to every Lead spawn prompt under §3.1's template.
+2. Each Lead repeats the same embedding into its Worker spawn prompts.
+3. Workers cite pillars by number in their evidence section when relevant.
+4. The Auditor (Phase 4) checks pillar compliance on every Lead deliverable —
+   violations get a FAIL row in the matrix (e.g., "uses `let` mutation pattern,
+   pillar 5 violation"). Standard 2-cycle fix loop applies; after 2 failed fixes
+   on the same pillar, halt and surface to user per §8.
+
+No paraphrasing, no abbreviation — the pillar text is the verbatim reference.
 
 ## References
 
