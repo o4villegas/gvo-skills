@@ -10,7 +10,7 @@ hands matched skills' content to the appropriate Lead.
 
 ## Output
 
-- A ranked list of matched skills (top 3 above threshold)
+- A ranked list of matched skills (top 2 above threshold, after optional §4.5 re-rank)
 - Each match has: skill name, path, score, why-matched, content (full SKILL.md text)
 
 The Director never sends just a path to a Lead — it embeds the full SKILL.md content
@@ -62,10 +62,12 @@ Also boost `category` matches:
 ### Step 3: Apply Threshold + Cap
 
 - Threshold: 5 — below this, the match is too weak to use
-- Cap: **top 5 above threshold** (was top 3). The wider candidate pool feeds Step
-  4.5's content-aware re-rank, which then narrows back to top 3. If Step 4.5 will
-  be skipped (skip condition: any skill scored ≥ 15), the Director can short-circuit
-  back to top 3 at this step.
+- **Candidate cap (internal): top 5 above threshold.** The wider pool feeds Step 4.5's
+  content-aware re-rank.
+- **Final cap (handed to Leads): top 2.** Step 4.5 re-ranks the top 5 candidates and
+  outputs the top 2 by content score. If Step 4.5 is skipped (skip condition: any
+  skill scored ≥ 15 OR top score ≥ 2× second-place — see §4.5 "When to run"), the
+  Director short-circuits to the top 2 by Step 2 score directly.
 - Ties broken by name length (longer name = more specific = preferred)
 
 If zero skills above threshold → no skill match → route through default plan/build/test
@@ -73,15 +75,19 @@ pipeline with stack defaults from §7 of SKILL.md.
 
 ### Step 4: Read Matched Skills' Content
 
-For each of the top 5 (or top 3 in the short-circuit case), `Read` its `path` field
-(resolved against `<repo-root>/skills/nexus/` from SKILL.md §1). Embed the FULL
-content into the Step 4.5 input (or directly into the relevant Lead's prompt if
-Step 4.5 is skipped) — do not summarize, do not pass just the path.
+For each of the top 5 (or top 2 in the short-circuit case where §4.5 is skipped),
+`Read` its `path` field (resolved against `<repo-root>/skills/nexus/` from SKILL.md
+§1). Embed the **trimmed** content (per "Loading Skills' Content" §) into the Step
+4.5 input or directly into the relevant Lead's prompt — do not summarize, do not
+pass just the path.
 
 ### Step 4.5: Content-Aware Re-Rank
 
-**When to run:** when no Step 2 score hit ≥ 15. Skip otherwise — the clear winner
-won't change under re-ranking.
+**When to run:** skip when EITHER (a) any Step 2 score ≥ 15, OR (b) top Step 2 score
+is ≥ 2× the second-place score. Both indicate an unambiguous winner — re-ranking
+won't change it. Run §6.5 in all other cases. Clusters of similar Step 2 scores
+(small gap between #1 and #2) are exactly where content re-ranking adds the most
+signal.
 
 **Why:** Step 2 scores against registry metadata only. As of 2026-05-17 the registry
 has 91% empty `tags` arrays and 17% empty `triggers` arrays, so metadata-only
@@ -110,7 +116,8 @@ actual skill body.
    <body>
    ...
    ```
-3. Parse the JSON reply. Top 3 by `score` field become the final matched skills.
+3. Parse the JSON reply. **Top 2 by `score` field** become the final matched skills
+   handed to Leads.
 4. Any of the 5 candidates that scored well in Step 2 but dropped in Step 4.5 gets
    logged to the Director's assumption ledger as:
    `A0_dropped_match: <name> (Step 2 score: X, Step 4.5 content score: Y, why: <reason>)`
@@ -125,7 +132,7 @@ cheaper individually but loses cross-skill calibration. The batched call lets th
 scorer see all 5 simultaneously and produce calibrated relative scores. Batch wins.
 
 **Failure handling:** if the opus call returns malformed JSON or non-JSON prose,
-fall back to the Step 2 top 3 and log
+fall back to the Step 2 top 2 and log
 `A0_step_4.5_parse_failed: opus reply was <first 200 chars>` to the ledger. Do not
 retry — that just adds cost without changing the underlying issue. The Step 2
 fallback is acceptable.
@@ -211,19 +218,28 @@ After matching:
    `path` field is relative to `skills/nexus/`).
 2. Verify the returned content has a `name:` field in frontmatter matching the skill
    name. If mismatch, the registry is out of sync — log assumption + use the file.
-3. Strip the YAML frontmatter from the content before embedding (the Lead doesn't need
-   the metadata, only the instructions).
-4. Embed in the Lead's prompt under a `## Skill Context (from registry match)` heading
-   with the skill name as a sub-heading.
+3. Strip the YAML frontmatter (the Lead doesn't need metadata, only instructions).
+4. **Trim the body** before embedding — strip these sections:
+   - `## What This Skill Is NOT` and any "Not for..." lists
+   - `## Anti-Patterns` / `## What X Doesn't Do` sections
+   - `## Worked Examples` / `## Examples` blocks (illustrative only)
+   - Large reference tables that duplicate adjacent prose
+   - Footnotes, version history, FAQ sections
+
+   Keep: instructional sections (how to act), spawn templates, hard rules /
+   constraints, error-mode tables, decision matrices, pillar lists. Trimming
+   typically cuts content by 40–60% with no loss of actionable guidance.
+5. Embed the trimmed body in the Lead's prompt under a `## Skill Context (from
+   registry match, trimmed)` heading with the skill name as a sub-heading.
 
 ```
-## Skill Context (from registry match)
+## Skill Context (from registry match, trimmed)
 
 ### cloudflare-deploy
-<full SKILL.md body, frontmatter stripped>
+<SKILL.md body, frontmatter + non-instructional sections stripped>
 
 ### pdf
-<full SKILL.md body, frontmatter stripped>
+<SKILL.md body, frontmatter + non-instructional sections stripped>
 ```
 
 ## Director's Skill-Match Output Format
