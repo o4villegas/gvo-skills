@@ -318,6 +318,36 @@
       "source": "existing"
     },
     {
+      "id": "fable-flow__imp_fab1e510",
+      "name": "fable-flow",
+      "description": "Fable-native multi-agent build pipeline; from-prompter's sibling. Sonnet scouts recon, a Fable 5 architect plans disjoint tracks, from-prompter's scoring loop hardens the plan, one sign-off, then Fable 5 implementers build in git worktrees and fresh-context Opus 4.8 reviewers verify before an opt-in PR. Scoped model exception (Sonnet/Fable/Opus) applies only inside this skill.",
+      "path": "../fable-flow/SKILL.md",
+      "category": "workflow",
+      "tags": [
+        "fable",
+        "pipeline",
+        "orchestrator",
+        "claude-code",
+        "multi-agent",
+        "worktree",
+        "from-prompter"
+      ],
+      "triggers": [
+        "fable-flow",
+        "fable flow",
+        "/fable-flow",
+        "run the fable pipeline",
+        "ship with fable",
+        "build with fable 5",
+        "fable-native build",
+        "fable multi-agent build",
+        "explore plan implement review ship",
+        "fable pipeline"
+      ],
+      "isActive": true,
+      "source": "local/gvo-skills"
+    },
+    {
       "id": "grow-sustainably__imp_e4d968b2",
       "name": "grow-sustainably",
       "description": "Evaluate business decisions through the lens of sustainable, profitable growth. Use when someone is making decisions about spending, hiring, fundraising, or scaling their business.",
