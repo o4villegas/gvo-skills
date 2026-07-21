@@ -23,3 +23,6 @@ __pycache__/
 # Empty placeholder dirs (recreated by setup.sh)
 skills/learned/
 skills/user/
+
+# Built skill archives (produced by scripts/build-skill.sh for claude.ai upload)
+dist/
